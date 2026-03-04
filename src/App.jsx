@@ -6,6 +6,8 @@ import RecipeDetails from './pages/RecipeDetails'
 import Favorites from './pages/Favorites'
 import Ingredients from './pages/Ingredients'
 import IngredientDetails from './pages/IngredientDetails'
+import Categories from './pages/Categories'
+import CategoryDetails from './pages/CategoryDetails'
 import ScrollToTopButton from './components/ScrollToTopButton'
 
 function App() {
@@ -21,6 +23,8 @@ function App() {
             <Route path="/favorites" element={<Favorites />} />
             <Route path="/ingredients" element={<Ingredients />} />
             <Route path="/ingredient/:name" element={<IngredientDetails />} />
+            <Route path="/categories" element={<Categories />} />
+            <Route path="/categories/:categoryName" element={<CategoryDetails />} />
           </Routes>
         </main>
 
