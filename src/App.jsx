@@ -4,6 +4,8 @@ import Footer from './components/Footer'
 import Home from './pages/Home'
 import RecipeDetails from './pages/RecipeDetails'
 import Favorites from './pages/Favorites'
+import Ingredients from './pages/Ingredients'
+import IngredientDetails from './pages/IngredientDetails'
 import ScrollToTopButton from './components/ScrollToTopButton'
 
 function App() {
@@ -17,6 +19,8 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/recipe/:id" element={<RecipeDetails />} />
             <Route path="/favorites" element={<Favorites />} />
+            <Route path="/ingredients" element={<Ingredients />} />
+            <Route path="/ingredient/:name" element={<IngredientDetails />} />
           </Routes>
         </main>
 
