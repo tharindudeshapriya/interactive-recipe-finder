@@ -52,6 +52,8 @@ const Home = () => {
     useEffect(() => {
         window.scrollTo(0, 0);
 
+        if (isMounted.current) return; // Prevent double firing
+
         const fetchLookupData = async () => {
             try {
                 if (allCategories.length === 0) {
@@ -91,13 +93,12 @@ const Home = () => {
         fetchLookupData();
         fetchCuratedContent();
 
-        if (!isMounted.current && recipes.length === 0) {
+        if (recipes.length === 0) {
             loadInspiration();
-            isMounted.current = true;
-        } else {
-            isMounted.current = true;
         }
-    }, [recipes.length, allCategories.length, allAreas.length, allIngredients.length, refreshRecipeOfTheDay]);
+
+        isMounted.current = true;
+    }, [dispatch, refreshRecipeOfTheDay]); // Removed length dependencies that cause re-renders
 
     // Update ingredients once list is loaded
     useEffect(() => {
