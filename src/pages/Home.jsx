@@ -18,13 +18,13 @@ const Home = () => {
 
     const isMounted = useRef(false);
 
-    // Load initial inspiration ONLY if we don't already have results in Redux
+    // Load initial inspiration if results are not already present in Redux
     useEffect(() => {
         if (!isMounted.current && recipes.length === 0) {
             loadInspiration();
             isMounted.current = true;
         } else {
-            // If we already have recipes (from Redux), don't fetch again on mount
+            // Prevent duplicate fetch on strict mode remount
             isMounted.current = true;
         }
     }, [recipes.length]);
@@ -33,7 +33,7 @@ const Home = () => {
         setLoading(true);
         setError(null);
         try {
-            // We need 4 random meals
+            // Fetch 4 random meals
             const randomPromises = Array.from({ length: 4 }).map(() => getRandomRecipe());
             const results = await Promise.all(randomPromises);
 
@@ -65,8 +65,7 @@ const Home = () => {
     const handleCategoryClick = async (category) => {
         setLoading(true);
         setError(null);
-        // We set the search term to visually show what they clicked, but
-        // treat it as a hardcoded category search for the API.
+        // Dispatch category directly as the search term for UI consistency
         dispatch(setSearchTerm(category));
         try {
             const results = await searchRecipesByCategory(category);
