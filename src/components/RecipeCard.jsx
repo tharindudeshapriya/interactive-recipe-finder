@@ -19,7 +19,7 @@ const RecipeCard = ({ recipe }) => {
                 if (!isFavoritesPage) {
                     setIsRemoving(false);
                 }
-            }, 1600); // Wait for the heartbreak/fade animation
+            }, 600); // Wait for the heartbreak/fade animation
         } else {
             dispatch(toggleFavorite(recipe));
         }

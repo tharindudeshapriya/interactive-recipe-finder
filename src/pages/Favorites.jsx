@@ -3,10 +3,12 @@ import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import RecipeCard from '../components/RecipeCard';
 import Pagination from '../components/Pagination';
+import useRandomBackground from '../hooks/useRandomBackground';
 
 const Favorites = () => {
     // Read the array of saved recipes straight from the global Redux store
     const favoriteRecipes = useSelector((state) => state.favorites.items);
+    const bgImage = useRandomBackground();
 
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 15;
@@ -32,28 +34,37 @@ const Favorites = () => {
 
     return (
         <div className="w-full">
-            {/* Minimalist Header */}
-            <section className="bg-bg-surface py-20 px-6 border-b border-text-base/10 text-center">
-                <div className="max-w-4xl mx-auto">
-                    <h1 className="text-5xl md:text-6xl font-serif text-text-base tracking-tight mb-4">
-                        Your Collection
+            {/* Animated Header */}
+            <header className="relative overflow-hidden pt-32 pb-24 px-6 text-center mb-12 shadow-sm">
+                <div
+                    className="absolute inset-0 bg-cover bg-center animate-slow-pan opacity-60"
+                    style={{ backgroundImage: `url('${bgImage}')` }}
+                ></div>
+                <div className="absolute inset-0 bg-gradient-to-b from-bg-base/30 via-bg-base/70 to-bg-base"></div>
+
+                <div className="relative z-10 max-w-4xl mx-auto flex flex-col items-center">
+                    <span className="text-[10px] bg-bg-surface/90 font-bold uppercase tracking-[0.4em] text-text-base px-6 py-2 rounded-full mb-6 block animate-in fade-in slide-in-from-bottom-2 duration-700 shadow-sm">Digital Cookbook</span>
+                    <h1 className="text-5xl md:text-6xl font-serif text-text-base tracking-tight mb-4 animate-in fade-in slide-in-from-bottom-4 duration-1000">
+                        Your <span className="italic font-light">Collection</span>
                     </h1>
-                    <p className="text-neutral-dark font-sans tracking-widest text-sm uppercase">
+                    <p className="text-text-base font-light font-sans tracking-widest text-sm uppercase animate-in fade-in slide-in-from-bottom-6 duration-1000">
                         {favoriteRecipes.length} {favoriteRecipes.length === 1 ? 'Recipe' : 'Recipes'} Saved
                     </p>
                 </div>
 
-                {favoriteRecipes.length > itemsPerPage && (
-                    <div className="flex justify-end mt-12 animate-in fade-in slide-in-from-bottom-8 duration-1000">
-                        <Pagination
-                            currentPage={currentPage}
-                            totalPages={totalPages}
-                            onPageChange={handlePageChange}
-                            className="!mt-0 !w-auto justify-end"
-                        />
-                    </div>
-                )}
-            </section>
+                <div className="relative z-10 max-w-7xl mx-auto flex justify-end">
+                    {favoriteRecipes.length > itemsPerPage && (
+                        <div className="flex justify-end mt-12 animate-in fade-in slide-in-from-bottom-8 duration-1000">
+                            <Pagination
+                                currentPage={currentPage}
+                                totalPages={totalPages}
+                                onPageChange={handlePageChange}
+                                className="!mt-0 !w-auto justify-end"
+                            />
+                        </div>
+                    )}
+                </div>
+            </header>
 
             {/* Results Grid */}
             <section className="max-w-7xl mx-auto px-6 py-20">

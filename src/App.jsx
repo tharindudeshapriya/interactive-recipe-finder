@@ -16,7 +16,7 @@ function App() {
       <div className="min-h-screen flex flex-col bg-secondary/10 text-text-base font-sans">
         <Navbar />
 
-        <main className="container mx-auto px-4 py-8 flex-grow">
+        <main className="flex-grow w-full">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/recipe/:id" element={<RecipeDetails />} />

@@ -4,11 +4,13 @@ import SearchBar from '../components/SearchBar';
 import IngredientCard from '../components/IngredientCard';
 import LoadingSpinner from '../components/LoadingSpinner';
 import Pagination from '../components/Pagination';
+import useRandomBackground from '../hooks/useRandomBackground';
 
 const Ingredients = () => {
     const { allIngredients } = useSelector((state) => state.search);
     const [searchTerm, setSearchTerm] = useState('');
     const [filteredIngredients, setFilteredIngredients] = useState([]);
+    const bgImage = useRandomBackground();
 
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 15;
@@ -35,18 +37,29 @@ const Ingredients = () => {
     };
 
     return (
-        <div className="min-h-screen pt-12 md:pt-20">
+        <div className="min-h-screen">
             {/* Header */}
-            <header className="max-w-4xl mx-auto px-6 text-center mb-16">
-                <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-primary mb-6 block animate-in fade-in slide-in-from-bottom-2 duration-700">The Library</span>
-                <h1 className="text-5xl md:text-7xl font-serif text-text-base mb-8 leading-tight animate-in fade-in slide-in-from-bottom-4 duration-1000">
-                    Know Your <br /> <span className="italic font-light">Ingredients</span>
-                </h1>
-                <p className="text-lg md:text-xl text-neutral-dark font-light italic mb-12 animate-in fade-in slide-in-from-bottom-6 duration-1000">
-                    Explore our comprehensive collection of culinary essentials.
-                </p>
+            <header className="relative overflow-hidden pt-32 pb-24 text-center mb-12 px-4 shadow-sm">
+                <div
+                    className="absolute inset-0 bg-cover bg-center animate-slow-pan opacity-60"
+                    style={{ backgroundImage: `url('${bgImage}')` }}
+                ></div>
+                <div className="absolute inset-0 bg-gradient-to-b from-bg-base/30 via-bg-base/70 to-bg-base"></div>
 
-                <div className="max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-8 duration-1000 mb-8">
+                <div className="relative z-10 max-w-4xl mx-auto flex flex-col items-center">
+                    <span className="text-[10px] bg-bg-surface/90 font-bold uppercase tracking-[0.4em] text-text-base px-6 py-2 rounded-full mb-6 block animate-in fade-in slide-in-from-bottom-2 duration-700 shadow-sm">The Library</span>
+                    <h1 className="text-5xl md:text-7xl font-serif text-text-base mb-8 leading-tight animate-in fade-in slide-in-from-bottom-4 duration-1000">
+                        Know Your <br /> <span className="italic font-light">Ingredients</span>
+                    </h1>
+                    <p className="text-lg md:text-xl text-text-base font-light italic mb-12 animate-in fade-in slide-in-from-bottom-6 duration-1000">
+                        Explore our comprehensive collection of culinary essentials.
+                    </p>
+                </div>
+            </header>
+
+            {/* Controls */}
+            <div className="max-w-7xl mx-auto px-6 mb-8 flex flex-col items-center">
+                <div className="w-full max-w-2xl animate-in fade-in slide-in-from-bottom-8 duration-1000 mb-8">
                     <SearchBar
                         value={searchTerm}
                         onChange={setSearchTerm}
@@ -55,7 +68,7 @@ const Ingredients = () => {
                     />
                 </div>
 
-                <div className="flex justify-end animate-in fade-in slide-in-from-bottom-8 duration-1000">
+                <div className="w-full flex justify-end animate-in fade-in slide-in-from-bottom-8 duration-1000">
                     {filteredIngredients.length > itemsPerPage && (
                         <Pagination
                             currentPage={currentPage}
@@ -65,7 +78,7 @@ const Ingredients = () => {
                         />
                     )}
                 </div>
-            </header>
+            </div>
 
             {/* Grid */}
             <section className="max-w-7xl mx-auto px-6 mb-24">
