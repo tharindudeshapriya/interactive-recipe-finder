@@ -8,7 +8,7 @@ import Favorites from './pages/Favorites'
 function App() {
   return (
     <Router>
-      <div className="min-h-screen flex flex-col bg-brand-yellow/10 text-gray-900 font-sans">
+      <div className="min-h-screen flex flex-col bg-secondary/10 text-text-base font-sans">
         <Navbar />
 
         <main className="container mx-auto px-4 py-8 flex-grow">
