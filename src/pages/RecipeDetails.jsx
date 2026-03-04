@@ -85,10 +85,31 @@ const RecipeDetails = () => {
 
     const ingredients = getIngredients();
 
-    // Formatting instructions
-    const formattedInstructions = recipe.strInstructions
-        .split(/(?:\r?\n)+/)
-        .filter(paragraph => paragraph.trim().length > 0);
+    // Advanced Instruction Parsing
+    const parseInstructions = (text) => {
+        if (!text) return [];
+
+        // Split by 1 or more newlines, capturing single or double paragraph breaks
+        const lines = text.split(/(?:\r?\n)+/);
+        const steps = [];
+
+        for (let i = 0; i < lines.length; i++) {
+            let line = lines[i].trim();
+            if (!line) continue;
+
+            // Remove leading step markers (e.g., "Step 1:", "1.", "2)", "STEP 3-")
+            let cleanLine = line.replace(/^(?:step|STEP)?\s*\d+[:\.\-\)]?\s*/i, '').trim();
+
+            // Ignore lines that were solely a step marker and ended up empty
+            if (cleanLine.length > 3) {
+                steps.push(cleanLine);
+            }
+        }
+
+        return steps;
+    };
+
+    const formattedInstructions = parseInstructions(recipe.strInstructions);
 
     return (
         <article className="max-w-7xl mx-auto w-full pt-8 pb-24 px-6">
@@ -200,15 +221,13 @@ const RecipeDetails = () => {
 
                     <div className="space-y-8 font-sans">
                         {formattedInstructions.map((paragraph, index) => {
-                            // Basic heuristic to catch "Step 1" or numbered list prefixes in the raw text
-                            const isStepHeader = /^step\s*\d+:?/i.test(paragraph) || /^\d+\./.test(paragraph);
-
+                            if (!paragraph) return null;
                             return (
                                 <div key={index} className="flex gap-4 md:gap-8 items-start group">
                                     <span className="shrink-0 text-text-base/20 font-serif text-3xl md:text-5xl font-bold leading-none select-none transition-colors group-hover:text-primary/30 pt-1">
                                         {(index + 1).toString().padStart(2, '0')}
                                     </span>
-                                    <p className={`text-base md:text-lg leading-relaxed text-text-base ${isStepHeader ? 'font-medium mt-1 md:mt-2' : 'font-light mt-0 md:mt-3'}`}>
+                                    <p className="text-base md:text-lg leading-relaxed text-text-base font-light mt-0 md:mt-3 whitespace-pre-wrap">
                                         {paragraph}
                                     </p>
                                 </div>
