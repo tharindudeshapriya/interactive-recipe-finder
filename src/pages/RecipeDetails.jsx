@@ -10,7 +10,7 @@ const RecipeDetails = () => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        // Scroll to the top of the page when this component mounts
+
         window.scrollTo(0, 0);
 
         const fetchRecipe = async () => {
@@ -63,7 +63,7 @@ const RecipeDetails = () => {
 
     const ingredients = getIngredients();
 
-    // Formatting instructions to extract paragraphs for better readability
+    // Formatting instructions
     const formattedInstructions = recipe.strInstructions
         .split(/(?:\r?\n)+/)
         .filter(paragraph => paragraph.trim().length > 0);
@@ -104,7 +104,7 @@ const RecipeDetails = () => {
                     </h1>
 
                     {recipe.strTags && (
-                        <div className="flex flex-wrap gap-3 mt-4">
+                        <div className="flex flex-wrap gap-3 mt-4 mb-8">
                             {recipe.strTags.split(',').map((tag) => (
                                 <span key={tag} className="text-xs font-medium text-neutral-dark bg-secondary/20 px-3 py-1.5 uppercase tracking-wider rounded">
                                     #{tag.trim()}
@@ -112,6 +112,19 @@ const RecipeDetails = () => {
                             ))}
                         </div>
                     )}
+
+                    <div className="mt-8">
+                        <button
+                            className="inline-flex items-center gap-3 px-8 py-4 bg-bg-surface border border-neutral-light/30 rounded-full text-neutral-dark hover:text-red-500 hover:border-red-200 hover:bg-red-50 transition-all duration-300 shadow-sm group font-bold tracking-widest text-xs uppercase"
+                            title="Add to favorite"
+                            onClick={() => {
+                                // TODO: Implement toggle favorite logic
+                            }}
+                        >
+                            <svg className="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                            Add to favourite
+                        </button>
+                    </div>
                 </div>
 
                 <figure className="order-1 lg:order-2 aspect-[4/3] w-full overflow-hidden rounded-md bg-neutral-light/10 shadow-sm border border-neutral-light/20 relative group">
