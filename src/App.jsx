@@ -4,6 +4,7 @@ import Footer from './components/Footer'
 import Home from './pages/Home'
 import RecipeDetails from './pages/RecipeDetails'
 import Favorites from './pages/Favorites'
+import ScrollToTopButton from './components/ScrollToTopButton'
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           </Routes>
         </main>
 
+        <ScrollToTopButton />
         <Footer />
       </div>
     </Router>
