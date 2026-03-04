@@ -13,7 +13,7 @@ const RecipeDetails = () => {
     const [error, setError] = useState(null);
 
     const dispatch = useDispatch();
-    // Safely check if the current recipe is favorited (default to false if recipe is null)
+    // check if the current recipe is favorited
     const isFavorite = useSelector((state) =>
         recipe ? selectIsFavorite(state, recipe.idMeal) : false
     );
@@ -111,7 +111,7 @@ const RecipeDetails = () => {
                         )}
                     </div>
 
-                    <h1 className="text-5xl md:text-7xl font-serif text-text-base leading-tight mb-8">
+                    <h1 className="text-4xl md:text-7xl font-serif text-text-base leading-tight mb-6 md:mb-8 font-medium">
                         {recipe.strMeal}
                     </h1>
 
@@ -125,16 +125,16 @@ const RecipeDetails = () => {
                         </div>
                     )}
 
-                    <div className="mt-8">
+                    <div className="mt-4 md:mt-8">
                         <button
-                            className={`inline-flex items-center gap-3 px-8 py-4 border rounded-full transition-all duration-300 shadow-sm group font-bold tracking-widest text-xs uppercase ${isFavorite
+                            className={`w-full sm:w-auto inline-flex items-center justify-center gap-3 px-6 md:px-8 py-3 md:py-4 border rounded-full transition-all duration-300 shadow-sm group font-bold tracking-widest text-[10px] md:text-xs uppercase ${isFavorite
                                 ? 'bg-red-50 border-red-200 text-red-600 shadow-inner'
                                 : 'bg-bg-surface border-neutral-light/30 text-neutral-dark hover:text-red-500 hover:border-red-200 hover:bg-red-50'
                                 }`}
                             title={isFavorite ? "Remove from collection" : "Add to collection"}
                             onClick={() => dispatch(toggleFavorite(recipe))}
                         >
-                            <svg className="w-5 h-5 transition-transform group-hover:scale-110" fill={isFavorite ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                            <svg className="w-4 h-4 md:w-5 md:h-5 transition-transform group-hover:scale-110" fill={isFavorite ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
                             {isFavorite ? "Remove from Collection" : "Add to Collection"}
                         </button>
                     </div>
@@ -184,10 +184,10 @@ const RecipeDetails = () => {
 
                             return (
                                 <div key={index} className="flex gap-4 md:gap-8 items-start group">
-                                    <span className="shrink-0 text-text-base/20 font-serif text-3xl md:text-5xl font-bold leading-none select-none transition-colors group-hover:text-primary/30">
+                                    <span className="shrink-0 text-text-base/20 font-serif text-3xl md:text-5xl font-bold leading-none select-none transition-colors group-hover:text-primary/30 pt-1">
                                         {(index + 1).toString().padStart(2, '0')}
                                     </span>
-                                    <p className={`text-lg leading-relaxed text-text-base ${isStepHeader ? 'font-medium mt-2' : 'font-light mt-1 md:mt-3'}`}>
+                                    <p className={`text-base md:text-lg leading-relaxed text-text-base ${isStepHeader ? 'font-medium mt-1 md:mt-2' : 'font-light mt-0 md:mt-3'}`}>
                                         {paragraph}
                                     </p>
                                 </div>

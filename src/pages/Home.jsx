@@ -86,31 +86,37 @@ const Home = () => {
     return (
         <div className="w-full">
             {/* Elegant Hero Section */}
-            <section className="py-20 md:py-32 px-6 text-center max-w-4xl mx-auto">
-                <h1 className="text-5xl md:text-7xl font-serif text-text-base mb-6 tracking-tight">
+            <section className={`px-6 text-center max-w-4xl mx-auto transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] ${isShowingInspiration ? 'py-12 md:py-32' : 'py-6 md:py-16'
+                }`}>
+                <h1 className={`font-serif text-text-base tracking-tight transition-all duration-700 ${isShowingInspiration ? 'text-4xl sm:text-5xl md:text-7xl mb-4 md:mb-6' : 'text-2xl md:text-4xl mb-3 md:mb-4'
+                    }`}>
                     The Culinary <span className="italic font-light">Archive</span>
                 </h1>
-                <p className="text-xl md:text-2xl text-neutral-dark font-light mb-12 max-w-2xl mx-auto leading-relaxed">
-                    A curated collection of exceptional recipes for the modern home chef.
-                </p>
 
-                <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row max-w-2xl mx-auto gap-0 bg-bg-surface border border-neutral-light/50 rounded-full overflow-hidden shadow-sm transition-all duration-300 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20">
+                <div className={`overflow-hidden transition-all duration-700 ${isShowingInspiration ? 'max-h-40 opacity-100 mb-12' : 'max-h-0 opacity-0 mb-6'
+                    }`}>
+                    <p className="text-xl md:text-2xl text-neutral-dark font-light max-w-2xl mx-auto leading-relaxed">
+                        A curated collection of exceptional recipes for the modern home chef.
+                    </p>
+                </div>
+
+                <form onSubmit={handleSubmit} className="flex max-w-2xl mx-auto bg-bg-surface border border-neutral-light/50 rounded-full overflow-hidden shadow-sm transition-all duration-300 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 relative z-10 w-full group">
                     <input
                         type="text"
-                        placeholder="Search ingredients, dishes, or techniques..."
-                        className="flex-grow py-4 px-8 bg-transparent focus:outline-none text-lg text-text-base border-none font-light placeholder:text-neutral-light placeholder:italic"
+                        placeholder="Search recipes..."
+                        className="flex-grow py-3 md:py-4 px-5 md:px-8 bg-transparent focus:outline-none text-base md:text-lg text-text-base border-none font-light placeholder:text-neutral-light placeholder:italic"
                         value={searchTerm}
                         onChange={(e) => dispatch(setSearchTerm(e.target.value))}
                     />
                     <button
                         type="submit"
-                        className="py-4 px-8 text-sm font-bold uppercase tracking-widest text-text-base hover:bg-neutral-light/10 transition-colors border-l border-neutral-light/20 sm:border-l-0"
+                        className="py-3 md:py-4 px-6 md:px-10 text-[10px] md:text-sm font-bold uppercase tracking-widest text-text-base hover:bg-neutral-light/5 transition-colors border-l border-neutral-light/20 bg-neutral-light/5"
                     >
                         Search
                     </button>
                 </form>
 
-                <div className="mt-12 flex flex-wrap justify-center gap-6">
+                <div className="mt-8 md:mt-12 flex flex-wrap justify-center items-center gap-x-6 gap-y-4">
                     {categories.map((category) => (
                         <button
                             key={category}
@@ -125,14 +131,14 @@ const Home = () => {
 
             {/* Results Section */}
             <section className="max-w-7xl mx-auto px-6 mb-24">
-                <div className="flex flex-col md:flex-row justify-between items-baseline mb-12 border-b border-neutral-light/20 pb-4">
-                    <h2 className="text-3xl font-serif text-text-base">
+                <div className="flex flex-col sm:flex-row justify-between items-center sm:items-baseline mb-8 md:mb-12 border-b border-neutral-light/20 pb-4">
+                    <h2 className="text-2xl md:text-3xl font-serif text-text-base">
                         {isShowingInspiration ? 'Curated Selections' : 'Search Results'}
                     </h2>
                     {isShowingInspiration && (
                         <button
                             onClick={loadInspiration}
-                            className="text-xs font-bold text-neutral-dark hover:text-text-base transition-colors uppercase tracking-widest mt-4 md:mt-0"
+                            className="text-[10px] md:text-xs font-bold text-neutral-dark hover:text-text-base transition-colors uppercase tracking-widest mt-4 sm:mt-0"
                         >
                             Shuffle Collection
                         </button>

@@ -21,7 +21,7 @@ const RecipeCard = ({ recipe }) => {
                             }`}
                         title={isFavorite ? "Remove from favorites" : "Add to favorites"}
                         onClick={(e) => {
-                            e.preventDefault();
+                            e.preventDefault(); // Prevent navigating to the recipe details page
                             dispatch(toggleFavorite(recipe));
                         }}
                     >
