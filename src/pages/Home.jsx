@@ -1,40 +1,45 @@
 import { useState, useEffect, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { searchRecipesByName, getRandomRecipe, searchRecipesByCategory } from '../services/recipeApi';
+import { setSearchTerm, setSearchResults, setInspirationResults } from '../store/searchSlice';
 import RecipeCard from '../components/RecipeCard';
 import LoadingSpinner from '../components/LoadingSpinner';
 
 const Home = () => {
-    const [searchTerm, setSearchTerm] = useState('');
-    const [recipes, setRecipes] = useState([]);
+    const dispatch = useDispatch();
+
+    // Pull state from Redux store
+    const { searchTerm, results: recipes, isShowingInspiration } = useSelector((state) => state.search);
+
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const [isShowingInspiration, setIsShowingInspiration] = useState(true);
 
     const categories = ['Chicken', 'Seafood', 'Dessert', 'Vegetarian', 'Beef', 'Pasta'];
 
     const isMounted = useRef(false);
 
-    // Load some initial recipes when the page first loads
+    // Load initial inspiration ONLY if we don't already have results in Redux
     useEffect(() => {
-        if (!isMounted.current) {
+        if (!isMounted.current && recipes.length === 0) {
             loadInspiration();
             isMounted.current = true;
+        } else {
+            // If we already have recipes (from Redux), don't fetch again on mount
+            isMounted.current = true;
         }
-    }, []);
+    }, [recipes.length]);
 
     const loadInspiration = async () => {
         setLoading(true);
         setError(null);
-        setIsShowingInspiration(true);
         try {
-
-
+            // We need 4 random meals
             const randomPromises = Array.from({ length: 4 }).map(() => getRandomRecipe());
             const results = await Promise.all(randomPromises);
 
             // Filter out any null results just in case an API call failed
             const validResults = results.filter(recipe => recipe !== null);
-            setRecipes(validResults);
+            dispatch(setInspirationResults(validResults));
         } catch (err) {
             setError('Failed to load inspiration.');
         } finally {
@@ -46,10 +51,9 @@ const Home = () => {
         if (!term) return;
         setLoading(true);
         setError(null);
-        setIsShowingInspiration(false);
         try {
             const results = await searchRecipesByName(term);
-            setRecipes(results);
+            dispatch(setSearchResults(results));
             if (results.length === 0) setError('No recipes found.');
         } catch (err) {
             setError('Failed to fetch recipes.');
@@ -61,11 +65,12 @@ const Home = () => {
     const handleCategoryClick = async (category) => {
         setLoading(true);
         setError(null);
-        setIsShowingInspiration(false);
-        setSearchTerm('');
+        // We set the search term to visually show what they clicked, but
+        // treat it as a hardcoded category search for the API.
+        dispatch(setSearchTerm(category));
         try {
             const results = await searchRecipesByCategory(category);
-            setRecipes(results);
+            dispatch(setSearchResults(results));
             if (results.length === 0) setError('No recipes found in this category.');
         } catch (err) {
             setError('Failed to fetch category recipes.');
@@ -96,7 +101,7 @@ const Home = () => {
                         placeholder="Search ingredients, dishes, or techniques..."
                         className="flex-grow py-4 px-8 bg-transparent focus:outline-none text-lg text-text-base border-none font-light placeholder:text-neutral-light placeholder:italic"
                         value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
+                        onChange={(e) => dispatch(setSearchTerm(e.target.value))}
                     />
                     <button
                         type="submit"

@@ -1,13 +1,22 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { toggleFavorite, selectIsFavorite } from '../store/favoritesSlice';
 import { getRecipeDetailsById } from '../services/recipeApi';
 import LoadingSpinner from '../components/LoadingSpinner';
 
 const RecipeDetails = () => {
     const { id } = useParams();
+    const navigate = useNavigate();
     const [recipe, setRecipe] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    const dispatch = useDispatch();
+    // Safely check if the current recipe is favorited (default to false if recipe is null)
+    const isFavorite = useSelector((state) =>
+        recipe ? selectIsFavorite(state, recipe.idMeal) : false
+    );
 
     useEffect(() => {
 
@@ -54,9 +63,9 @@ const RecipeDetails = () => {
                 <div className="text-neutral-dark font-light italic text-lg mb-8">
                     {error || 'The requested recipe archive could not be located.'}
                 </div>
-                <Link to="/" className="text-sm font-bold tracking-widest text-text-base hover:text-primary transition-colors uppercase border-b border-text-base hover:border-primary pb-1">
-                    Return to Collection
-                </Link>
+                <button onClick={() => navigate(-1)} className="text-sm font-bold tracking-widest text-text-base hover:text-primary transition-colors uppercase border-b border-text-base hover:border-primary pb-1">
+                    Go Back
+                </button>
             </div>
         );
     }
@@ -72,10 +81,13 @@ const RecipeDetails = () => {
         <article className="max-w-7xl mx-auto w-full pt-8 pb-24 px-6">
             {/* Top Navigation */}
             <nav className="mb-12">
-                <Link to="/" className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-neutral-dark hover:text-text-base transition-colors relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-[1px] after:bg-text-base hover:after:w-full after:transition-all after:duration-300">
+                <button
+                    onClick={() => navigate(-1)}
+                    className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-neutral-dark hover:text-text-base transition-colors relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-[1px] after:bg-text-base hover:after:w-full after:transition-all after:duration-300"
+                >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="square" strokeLinejoin="miter" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                    Back to Collection
-                </Link>
+                    Go Back
+                </button>
             </nav>
 
             <header className="grid lg:grid-cols-2 gap-12 lg:gap-24 mb-16 items-center">
@@ -115,14 +127,15 @@ const RecipeDetails = () => {
 
                     <div className="mt-8">
                         <button
-                            className="inline-flex items-center gap-3 px-8 py-4 bg-bg-surface border border-neutral-light/30 rounded-full text-neutral-dark hover:text-red-500 hover:border-red-200 hover:bg-red-50 transition-all duration-300 shadow-sm group font-bold tracking-widest text-xs uppercase"
-                            title="Add to favorite"
-                            onClick={() => {
-                                // TODO: Implement toggle favorite logic
-                            }}
+                            className={`inline-flex items-center gap-3 px-8 py-4 border rounded-full transition-all duration-300 shadow-sm group font-bold tracking-widest text-xs uppercase ${isFavorite
+                                ? 'bg-red-50 border-red-200 text-red-600 shadow-inner'
+                                : 'bg-bg-surface border-neutral-light/30 text-neutral-dark hover:text-red-500 hover:border-red-200 hover:bg-red-50'
+                                }`}
+                            title={isFavorite ? "Remove from collection" : "Add to collection"}
+                            onClick={() => dispatch(toggleFavorite(recipe))}
                         >
-                            <svg className="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
-                            Add to favourite
+                            <svg className="w-5 h-5 transition-transform group-hover:scale-110" fill={isFavorite ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                            {isFavorite ? "Remove from Collection" : "Add to Collection"}
                         </button>
                     </div>
                 </div>
