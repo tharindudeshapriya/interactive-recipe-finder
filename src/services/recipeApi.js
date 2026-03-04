@@ -49,3 +49,43 @@ export const searchRecipesByCategory = async (category) => {
         throw error;
     }
 };
+
+export const listAllCategories = async () => {
+    try {
+        const response = await fetch(`${BASE_URL}/categories.php`);
+        const data = await response.json();
+        return data.categories || [];
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const listAllAreas = async () => {
+    try {
+        const response = await fetch(`${BASE_URL}/list.php?a=list`);
+        const data = await response.json();
+        return data.meals || [];
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const searchRecipesByArea = async (area) => {
+    try {
+        const response = await fetch(`${BASE_URL}/filter.php?a=${area}`);
+        const data = await response.json();
+        return data.meals || [];
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const listAllIngredients = async () => {
+    try {
+        const response = await fetch(`${BASE_URL}/list.php?i=list`);
+        const data = await response.json();
+        return data.meals || [];
+    } catch (error) {
+        throw error;
+    }
+};

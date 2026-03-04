@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { searchRecipesByName, getRandomRecipe, searchRecipesByCategory } from '../services/recipeApi';
-import { setSearchTerm, setSearchResults, setInspirationResults } from '../store/searchSlice';
+import { searchRecipesByName, getRandomRecipe, searchRecipesByCategory, searchRecipesByIngredient, searchRecipesByArea, listAllCategories, listAllAreas, listAllIngredients } from '../services/recipeApi';
+import { setSearchTerm, setSearchResults, setInspirationResults, setSearchType, setAllCategories, setAllAreas, setAllIngredients } from '../store/searchSlice';
 import RecipeCard from '../components/RecipeCard';
 import LoadingSpinner from '../components/LoadingSpinner';
 
@@ -9,25 +9,65 @@ const Home = () => {
     const dispatch = useDispatch();
 
     // Pull state from Redux store
-    const { searchTerm, results: recipes, isShowingInspiration } = useSelector((state) => state.search);
+    const { searchTerm, results: recipes, isShowingInspiration, searchType, allCategories, allAreas, allIngredients } = useSelector((state) => state.search);
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [isAreaOpen, setIsAreaOpen] = useState(false);
+    const [suggestions, setSuggestions] = useState([]);
+    const [showSuggestions, setShowSuggestions] = useState(false);
+    const areaRef = useRef(null);
+    const searchRef = useRef(null);
 
-    const categories = ['Chicken', 'Seafood', 'Dessert', 'Vegetarian', 'Beef', 'Pasta'];
+    // Removed hardcoded categories
 
     const isMounted = useRef(false);
 
-    // Load initial inspiration if results are not already present in Redux
+    // Close dropdowns when clicking outside
     useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (areaRef.current && !areaRef.current.contains(event.target)) {
+                setIsAreaOpen(false);
+            }
+            if (searchRef.current && !searchRef.current.contains(event.target)) {
+                setShowSuggestions(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    // Load initial data on mount
+    useEffect(() => {
+        // Fetch lookup data if not present
+        const fetchLookupData = async () => {
+            try {
+                if (allCategories.length === 0) {
+                    const cats = await listAllCategories();
+                    dispatch(setAllCategories(cats));
+                }
+                if (allAreas.length === 0) {
+                    const areas = await listAllAreas();
+                    dispatch(setAllAreas(areas));
+                }
+                if (allIngredients.length === 0) {
+                    const ingredients = await listAllIngredients();
+                    dispatch(setAllIngredients(ingredients));
+                }
+            } catch (err) {
+                console.error('Failed to load lookup data');
+            }
+        };
+
+        fetchLookupData();
+
         if (!isMounted.current && recipes.length === 0) {
             loadInspiration();
             isMounted.current = true;
         } else {
-            // Prevent duplicate fetch on strict mode remount
             isMounted.current = true;
         }
-    }, [recipes.length]);
+    }, [recipes.length, allCategories.length, allAreas.length, allIngredients.length]);
 
     const loadInspiration = async () => {
         setLoading(true);
@@ -52,11 +92,52 @@ const Home = () => {
         setLoading(true);
         setError(null);
         try {
-            const results = await searchRecipesByName(term);
+            let results;
+            if (searchType === 'ingredient') {
+                results = await searchRecipesByIngredient(term);
+            } else {
+                results = await searchRecipesByName(term);
+            }
             dispatch(setSearchResults(results));
-            if (results.length === 0) setError('No recipes found.');
+            if (results.length === 0) setError('No recipes found matching your query.');
         } catch (err) {
             setError('Failed to fetch recipes.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleInputChange = (value) => {
+        dispatch(setSearchTerm(value));
+
+        if (searchType === 'ingredient' && value.length >= 2) {
+            const matches = allIngredients
+                .filter(item => item.strIngredient.toLowerCase().includes(value.toLowerCase()))
+                .slice(0, 8); // Limit to top 8 suggestions
+            setSuggestions(matches);
+            setShowSuggestions(true);
+        } else {
+            setShowSuggestions(false);
+        }
+    };
+
+    const handleSuggestionClick = (ingredient) => {
+        dispatch(setSearchTerm(ingredient));
+        setShowSuggestions(false);
+        handleSearch(ingredient);
+    };
+
+    const handleAreaChange = async (area) => {
+        if (!area) return;
+        setLoading(true);
+        setError(null);
+        dispatch(setSearchTerm('')); // Clear text search
+        try {
+            const results = await searchRecipesByArea(area);
+            dispatch(setSearchResults(results));
+            if (results.length === 0) setError(`No ${area} recipes found.`);
+        } catch (err) {
+            setError('Failed to fetch cuisine results.');
         } finally {
             setLoading(false);
         }
@@ -100,30 +181,116 @@ const Home = () => {
                     </p>
                 </div>
 
-                <form onSubmit={handleSubmit} className="flex max-w-2xl mx-auto bg-bg-surface border border-neutral-light/50 rounded-full overflow-hidden shadow-sm transition-all duration-300 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 relative z-10 w-full group">
-                    <input
-                        type="text"
-                        placeholder="Search recipes..."
-                        className="flex-grow py-3 md:py-4 px-5 md:px-8 bg-transparent focus:outline-none text-base md:text-lg text-text-base border-none font-light placeholder:text-neutral-light placeholder:italic"
-                        value={searchTerm}
-                        onChange={(e) => dispatch(setSearchTerm(e.target.value))}
-                    />
+                <div className="flex justify-center mb-6 gap-4">
                     <button
-                        type="submit"
-                        className="py-3 md:py-4 px-6 md:px-10 text-[10px] md:text-sm font-bold uppercase tracking-widest text-text-base hover:bg-neutral-light/5 transition-colors border-l border-neutral-light/20 bg-neutral-light/5"
+                        onClick={() => dispatch(setSearchType('name'))}
+                        className={`text-[10px] font-bold tracking-widest uppercase transition-all pb-1 border-b-2 ${searchType === 'name' ? 'text-text-base border-primary' : 'text-neutral-dark border-transparent hover:text-text-base'}`}
                     >
-                        Search
+                        By Recipe Name
                     </button>
-                </form>
+                    <button
+                        onClick={() => dispatch(setSearchType('ingredient'))}
+                        className={`text-[10px] font-bold tracking-widest uppercase transition-all pb-1 border-b-2 ${searchType === 'ingredient' ? 'text-text-base border-primary' : 'text-neutral-dark border-transparent hover:text-text-base'}`}
+                    >
+                        By Primary Ingredient
+                    </button>
+                </div>
 
-                <div className="mt-8 md:mt-12 flex flex-wrap justify-center items-center gap-x-6 gap-y-4">
-                    {categories.map((category) => (
+                <div className="flex flex-col md:flex-row max-w-2xl mx-auto gap-4 items-center">
+                    <div className="flex-grow w-full relative" ref={searchRef}>
+                        <form onSubmit={handleSubmit} className="flex bg-bg-surface border border-neutral-light/50 rounded-full overflow-hidden shadow-sm transition-all duration-300 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 relative z-20 w-full group">
+                            <input
+                                type="text"
+                                placeholder={searchType === 'name' ? "Search recipes..." : "Enter an ingredient (e.g. Chicken)..."}
+                                className="flex-grow py-3 md:py-4 px-5 md:px-8 bg-transparent focus:outline-none text-base md:text-lg text-text-base border-none font-light placeholder:text-neutral-light placeholder:italic"
+                                value={searchTerm}
+                                onChange={(e) => handleInputChange(e.target.value)}
+                                onFocus={() => searchTerm.length >= 2 && searchType === 'ingredient' && setShowSuggestions(true)}
+                            />
+                            <button
+                                type="submit"
+                                className="py-3 md:py-4 px-6 md:px-10 text-[10px] md:text-sm font-bold uppercase tracking-widest text-text-base hover:bg-neutral-light/5 transition-colors border-l border-neutral-light/20 bg-neutral-light/5"
+                            >
+                                Search
+                            </button>
+                        </form>
+
+                        {/* Autocomplete Suggestions */}
+                        {showSuggestions && suggestions.length > 0 && (
+                            <div className="absolute left-0 right-0 mt-2 bg-bg-surface border border-neutral-light/30 rounded-2xl shadow-xl z-50 overflow-hidden transition-all duration-300 origin-top animate-in fade-in slide-in-from-top-2">
+                                <div className="py-2">
+                                    {suggestions.map((item) => (
+                                        <button
+                                            key={item.idIngredient}
+                                            onClick={() => handleSuggestionClick(item.strIngredient)}
+                                            className="w-full text-left px-8 py-3 text-sm font-light text-text-base hover:bg-neutral-light/5 hover:text-primary transition-colors flex items-center justify-between group border-b border-neutral-light/5 last:border-0"
+                                        >
+                                            <span>{item.strIngredient}</span>
+                                            <span className="text-[9px] font-bold uppercase tracking-tighter text-neutral-light opacity-0 group-hover:opacity-100 transition-opacity">Select</span>
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="w-full md:w-56 relative" ref={areaRef}>
                         <button
-                            key={category}
-                            onClick={() => handleCategoryClick(category)}
-                            className="text-sm font-medium tracking-wider text-neutral-dark hover:text-text-base uppercase transition-colors relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-[1px] after:bg-text-base hover:after:w-full after:transition-all after:duration-300"
+                            type="button"
+                            onClick={() => setIsAreaOpen(!isAreaOpen)}
+                            className="w-full bg-bg-surface border border-neutral-light/50 rounded-full py-3 md:py-4 px-6 text-[10px] font-bold uppercase tracking-widest text-text-base focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 cursor-pointer shadow-sm flex justify-between items-center group transition-all duration-300"
                         >
-                            {category}
+                            <span className="truncate">{searchTerm && allAreas.some(a => a.strArea === searchTerm) ? searchTerm : 'All Cuisines'}</span>
+                            <svg
+                                className={`w-4 h-4 text-neutral-dark group-hover:text-text-base transition-transform duration-300 ${isAreaOpen ? 'rotate-180' : ''}`}
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+
+                        {/* Custom Dropdown Menu */}
+                        <div className={`absolute left-0 right-0 mt-2 bg-bg-surface border border-neutral-light/30 rounded-2xl shadow-xl z-50 overflow-hidden transition-all duration-300 origin-top overflow-y-auto max-h-80 ${isAreaOpen ? 'opacity-100 scale-y-100' : 'opacity-0 scale-y-0 pointer-events-none'}`}>
+                            <div className="py-2">
+                                <button
+                                    onClick={() => {
+                                        handleAreaChange('');
+                                        setIsAreaOpen(false);
+                                    }}
+                                    className="w-full text-left px-6 py-3 text-[10px] font-bold uppercase tracking-widest text-neutral-dark hover:bg-neutral-light/5 hover:text-text-base transition-colors"
+                                >
+                                    All Cuisines
+                                </button>
+                                {allAreas.map((area) => (
+                                    <button
+                                        key={area.strArea}
+                                        onClick={() => {
+                                            handleAreaChange(area.strArea);
+                                            setIsAreaOpen(false);
+                                        }}
+                                        className="w-full text-left px-6 py-3 text-[10px] font-bold uppercase tracking-widest text-text-base hover:bg-neutral-light/5 hover:text-primary transition-colors border-t border-neutral-light/5 first:border-t-0"
+                                    >
+                                        {area.strArea}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="mt-8 md:mt-12 flex flex-wrap justify-center items-center gap-2 md:gap-x-6 gap-y-3">
+                    {allCategories.map((cat) => (
+                        <button
+                            key={cat.idCategory}
+                            onClick={() => handleCategoryClick(cat.strCategory)}
+                            className={`text-[10px] md:text-sm font-medium tracking-wider uppercase transition-all px-4 py-2 md:p-0 rounded-full md:rounded-none border md:border-0 ${searchTerm === cat.strCategory && !isShowingInspiration
+                                ? 'bg-text-base text-bg-base border-text-base md:bg-transparent md:text-text-base'
+                                : 'text-neutral-dark hover:text-text-base border-neutral-light/30 hover:border-text-base md:border-transparent md:hover:border-transparent'
+                                } relative md:after:content-[''] md:after:absolute md:after:-bottom-1 md:after:left-0 md:after:w-0 md:after:h-[1px] md:after:bg-text-base md:hover:after:w-full md:after:transition-all md:after:duration-300`}
+                        >
+                            {cat.strCategory}
                         </button>
                     ))}
                 </div>

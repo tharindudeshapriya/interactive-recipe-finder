@@ -3,7 +3,11 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
     searchTerm: '',
     results: [],
-    isShowingInspiration: true, // Tracks whether we are showing random recipes or search results
+    isShowingInspiration: true,
+    searchType: 'name', // 'name' or 'ingredient'
+    allCategories: [],
+    allAreas: [],
+    allIngredients: [],
 };
 
 const searchSlice = createSlice({
@@ -20,7 +24,19 @@ const searchSlice = createSlice({
         setInspirationResults: (state, action) => {
             state.results = action.payload;
             state.isShowingInspiration = true;
-            state.searchTerm = ''; // Clear search term when returning to inspiration
+            state.searchTerm = '';
+        },
+        setSearchType: (state, action) => {
+            state.searchType = action.payload;
+        },
+        setAllCategories: (state, action) => {
+            state.allCategories = action.payload;
+        },
+        setAllAreas: (state, action) => {
+            state.allAreas = action.payload;
+        },
+        setAllIngredients: (state, action) => {
+            state.allIngredients = action.payload;
         },
         clearSearch: (state) => {
             state.searchTerm = '';
@@ -34,6 +50,10 @@ export const {
     setSearchTerm,
     setSearchResults,
     setInspirationResults,
+    setSearchType,
+    setAllCategories,
+    setAllAreas,
+    setAllIngredients,
     clearSearch
 } = searchSlice.actions;
 
