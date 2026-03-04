@@ -1,10 +1,34 @@
+import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import RecipeCard from '../components/RecipeCard';
+import Pagination from '../components/Pagination';
 
 const Favorites = () => {
     // Read the array of saved recipes straight from the global Redux store
     const favoriteRecipes = useSelector((state) => state.favorites.items);
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 15;
+
+    const totalPages = Math.ceil(favoriteRecipes.length / itemsPerPage);
+
+    // If items are removed and we're on a page that no longer exists, go back
+    useEffect(() => {
+        if (currentPage > totalPages && totalPages > 0) {
+            setCurrentPage(totalPages);
+        }
+    }, [favoriteRecipes.length, totalPages, currentPage]);
+
+    const currentRecipes = favoriteRecipes.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+    );
+
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
 
     return (
         <div className="w-full">
@@ -18,6 +42,17 @@ const Favorites = () => {
                         {favoriteRecipes.length} {favoriteRecipes.length === 1 ? 'Recipe' : 'Recipes'} Saved
                     </p>
                 </div>
+
+                {favoriteRecipes.length > itemsPerPage && (
+                    <div className="flex justify-end mt-12 animate-in fade-in slide-in-from-bottom-8 duration-1000">
+                        <Pagination
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            onPageChange={handlePageChange}
+                            className="!mt-0 !w-auto justify-end"
+                        />
+                    </div>
+                )}
             </section>
 
             {/* Results Grid */}
@@ -37,11 +72,18 @@ const Favorites = () => {
                         </Link>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-16">
-                        {favoriteRecipes.map((recipe) => (
-                            <RecipeCard key={recipe.idMeal} recipe={recipe} />
-                        ))}
-                    </div>
+                    <>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-16">
+                            {currentRecipes.map((recipe) => (
+                                <RecipeCard key={recipe.idMeal} recipe={recipe} />
+                            ))}
+                        </div>
+                        <Pagination
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            onPageChange={handlePageChange}
+                        />
+                    </>
                 )}
             </section>
         </div>

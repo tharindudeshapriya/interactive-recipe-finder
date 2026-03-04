@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { searchRecipesByCategory } from '../services/recipeApi';
 import RecipeCard from '../components/RecipeCard';
 import LoadingSpinner from '../components/LoadingSpinner';
+import Pagination from '../components/Pagination';
 
 const CategoryDetails = () => {
     const { categoryName } = useParams();
@@ -11,6 +12,8 @@ const CategoryDetails = () => {
     const [recipes, setRecipes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 15;
 
     // Find the current category object to get its details
     const categoryDetails = allCategories.find(
@@ -25,6 +28,7 @@ const CategoryDetails = () => {
                 const results = await searchRecipesByCategory(categoryName);
                 if (results) {
                     setRecipes(results);
+                    setCurrentPage(1); // Reset page on category change
                 } else {
                     setError(`No recipes found for category: ${categoryName}`);
                 }
@@ -39,6 +43,17 @@ const CategoryDetails = () => {
             fetchCategoryRecipes();
         }
     }, [categoryName]);
+
+    const totalPages = Math.ceil(recipes.length / itemsPerPage);
+    const currentRecipes = recipes.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+    );
+
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
 
     if (loading) return <LoadingSpinner />;
 
@@ -86,15 +101,32 @@ const CategoryDetails = () => {
                     Explore exactly {recipes.length} exceptional recipes.
                 </p>
 
-                <div className="w-24 h-[1px] bg-neutral-light/30 mx-auto mt-12"></div>
+                <div className="w-24 h-[1px] bg-neutral-light/30 mx-auto mt-12 mb-8"></div>
+
+                <div className="flex justify-end animate-in fade-in slide-in-from-bottom-8 duration-1000">
+                    {recipes.length > itemsPerPage && (
+                        <Pagination
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            onPageChange={handlePageChange}
+                            className="!mt-0 !w-auto justify-end"
+                        />
+                    )}
+                </div>
             </header>
 
             {/* Recipes Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-12 md:gap-y-16 animate-in fade-in slide-in-from-bottom-8 duration-1000">
-                {recipes.map((recipe) => (
+                {currentRecipes.map((recipe) => (
                     <RecipeCard key={recipe.idMeal} recipe={recipe} />
                 ))}
             </div>
+
+            <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+            />
         </div>
     );
 };
