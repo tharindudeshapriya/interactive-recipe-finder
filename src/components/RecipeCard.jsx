@@ -2,29 +2,25 @@ import { Link } from 'react-router-dom';
 
 const RecipeCard = ({ recipe }) => {
     return (
-        <div className="bg-bg-surface rounded-xl shadow-lg overflow-hidden border border-neutral-light/20 hover:shadow-xl transition-shadow group">
-            <div className="relative h-48 overflow-hidden">
-                <img
-                    src={recipe.strMealThumb}
-                    alt={recipe.strMeal}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                />
-                <div className="absolute top-2 right-2 bg-secondary px-2 py-1 rounded-md text-xs font-bold text-text-base shadow-sm">
-                    {recipe.strCategory || 'Recipe'}
+        <article className="group cursor-pointer bg-bg-surface border border-neutral-light/50 rounded-xl p-3 pb-6 transition-all duration-500 hover:border-primary/50 hover:shadow-lg hover:-translate-y-1">
+            <Link to={`/recipe/${recipe.idMeal}`} className="block">
+                <figure className="relative aspect-[4/5] overflow-hidden rounded-lg bg-neutral-light/10 mb-5">
+                    <img
+                        src={recipe.strMealThumb}
+                        alt={`Photo of ${recipe.strMeal}`}
+                        className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                    />
+                </figure>
+                <div className="flex flex-col items-center text-center px-2">
+                    <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-dark mb-2">
+                        {recipe.strCategory || 'Recipe'}
+                    </span>
+                    <h3 className="text-xl font-serif text-text-base leading-snug group-hover:text-primary transition-colors line-clamp-2">
+                        {recipe.strMeal}
+                    </h3>
                 </div>
-            </div>
-            <div className="p-4">
-                <h3 className="text-lg font-bold text-text-base line-clamp-1 mb-3">
-                    {recipe.strMeal}
-                </h3>
-                <Link
-                    to={`/recipe/${recipe.idMeal}`}
-                    className="block w-full text-center bg-primary hover:bg-primary/90 text-text-base font-bold py-2 rounded-lg transition-colors"
-                >
-                    View Recipe
-                </Link>
-            </div>
-        </div>
+            </Link>
+        </article>
     );
 };
 

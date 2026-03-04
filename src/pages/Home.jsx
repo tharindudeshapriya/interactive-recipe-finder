@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { searchRecipesByName, getRandomRecipe, searchRecipesByCategory } from '../services/recipeApi';
 import RecipeCard from '../components/RecipeCard';
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -12,9 +12,14 @@ const Home = () => {
 
     const categories = ['Chicken', 'Seafood', 'Dessert', 'Vegetarian', 'Beef', 'Pasta'];
 
+    const isMounted = useRef(false);
+
     // Load some initial recipes when the page first loads
     useEffect(() => {
-        loadInspiration();
+        if (!isMounted.current) {
+            loadInspiration();
+            isMounted.current = true;
+        }
     }, []);
 
     const loadInspiration = async () => {
@@ -22,7 +27,8 @@ const Home = () => {
         setError(null);
         setIsShowingInspiration(true);
         try {
-            // array of 4 promises for 4 random meals
+
+
             const randomPromises = Array.from({ length: 4 }).map(() => getRandomRecipe());
             const results = await Promise.all(randomPromises);
 
@@ -75,54 +81,56 @@ const Home = () => {
 
     return (
         <div className="w-full">
-            <section className="bg-primary py-16 px-6 mb-12 text-center rounded-3xl shadow-lg border-4 border-bg-surface mt-4">
-                <div className="max-w-4xl mx-auto">
-                    <h1 className="text-5xl font-extrabold text-text-inverse mb-6 tracking-tight drop-shadow-sm">
-                        Discover Your Next Favorite Meal
-                    </h1>
-                    <p className="text-xl text-text-base font-medium mb-10">
-                        Search thousands of recipes from around the world
-                    </p>
-                    <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row max-w-2xl mx-auto gap-4">
-                        <input
-                            type="text"
-                            placeholder="Search recipes..."
-                            className="flex-grow p-4 rounded-xl border border-accent focus:outline-none focus:ring-4 focus:ring-secondary bg-bg-surface text-text-base shadow-sm text-lg"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                        />
+            {/* Elegant Hero Section */}
+            <section className="py-20 md:py-32 px-6 text-center max-w-4xl mx-auto">
+                <h1 className="text-5xl md:text-7xl font-serif text-text-base mb-6 tracking-tight">
+                    The Culinary <span className="italic font-light">Archive</span>
+                </h1>
+                <p className="text-xl md:text-2xl text-neutral-dark font-light mb-12 max-w-2xl mx-auto leading-relaxed">
+                    A curated collection of exceptional recipes for the modern home chef.
+                </p>
+
+                <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row max-w-2xl mx-auto gap-0 bg-bg-surface border border-neutral-light/50 rounded-full overflow-hidden shadow-sm transition-all duration-300 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20">
+                    <input
+                        type="text"
+                        placeholder="Search ingredients, dishes, or techniques..."
+                        className="flex-grow py-4 px-8 bg-transparent focus:outline-none text-lg text-text-base border-none font-light placeholder:text-neutral-light placeholder:italic"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                    <button
+                        type="submit"
+                        className="py-4 px-8 text-sm font-bold uppercase tracking-widest text-text-base hover:bg-neutral-light/10 transition-colors border-l border-neutral-light/20 sm:border-l-0"
+                    >
+                        Search
+                    </button>
+                </form>
+
+                <div className="mt-12 flex flex-wrap justify-center gap-6">
+                    {categories.map((category) => (
                         <button
-                            type="submit"
-                            className="bg-secondary text-text-base px-8 py-4 rounded-xl font-bold hover:bg-bg-surface transition-all shadow-md text-lg"
+                            key={category}
+                            onClick={() => handleCategoryClick(category)}
+                            className="text-sm font-medium tracking-wider text-neutral-dark hover:text-text-base uppercase transition-colors relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-[1px] after:bg-text-base hover:after:w-full after:transition-all after:duration-300"
                         >
-                            Search
+                            {category}
                         </button>
-                    </form>
-                    <div className="mt-8 flex flex-wrap justify-center gap-3">
-                        {categories.map((category) => (
-                            <button
-                                key={category}
-                                onClick={() => handleCategoryClick(category)}
-                                className="bg-bg-surface/30 hover:bg-bg-surface/60 text-text-base border border-text-base/10 px-5 py-2 rounded-full font-bold transition-colors backdrop-blur-sm"
-                            >
-                                {category}
-                            </button>
-                        ))}
-                    </div>
+                    ))}
                 </div>
             </section>
 
-            <section className="max-w-7xl mx-auto px-4 mb-20">
-                <div className="flex justify-between items-center mb-8">
-                    <h2 className="text-3xl font-bold text-text-base">
-                        {isShowingInspiration ? 'Today\'s Inspiration' : 'Search Results'}
+            {/* Results Section */}
+            <section className="max-w-7xl mx-auto px-6 mb-24">
+                <div className="flex flex-col md:flex-row justify-between items-baseline mb-12 border-b border-neutral-light/20 pb-4">
+                    <h2 className="text-3xl font-serif text-text-base">
+                        {isShowingInspiration ? 'Curated Selections' : 'Search Results'}
                     </h2>
                     {isShowingInspiration && (
                         <button
                             onClick={loadInspiration}
-                            className="text-primary font-extrabold hover:text-text-base transition-colors uppercase tracking-wider text-sm"
+                            className="text-xs font-bold text-neutral-dark hover:text-text-base transition-colors uppercase tracking-widest mt-4 md:mt-0"
                         >
-                            Refresh
+                            Shuffle Collection
                         </button>
                     )}
                 </div>
@@ -130,11 +138,11 @@ const Home = () => {
                 {loading ? (
                     <LoadingSpinner />
                 ) : error ? (
-                    <div className="bg-secondary/30 text-text-base p-6 rounded-xl text-center font-bold border border-accent shadow-sm">
-                        {error}
+                    <div className="py-16 text-center">
+                        <p className="text-xl text-neutral-dark font-light italic">{error}</p>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-16">
                         {recipes.map((recipe) => (
                             <RecipeCard key={recipe.idMeal} recipe={recipe} />
                         ))}
