@@ -74,7 +74,7 @@ const IngredientDetails = () => {
                         onClick={handleExploreClick}
                         className="px-8 py-4 bg-text-base text-bg-base text-[10px] font-bold uppercase tracking-widest hover:bg-primary transition-colors rounded-full"
                     >
-                        Explore all Recipes
+                        View more recipes
                     </button>
                 </div>
                 <div className="flex-1 order-1 md:order-2 flex justify-center">

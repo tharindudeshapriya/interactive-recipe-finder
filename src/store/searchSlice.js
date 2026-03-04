@@ -4,7 +4,7 @@ const initialState = {
     searchTerm: '',
     results: [],
     isShowingInspiration: true,
-    searchType: 'name', // 'name' or 'ingredient'
+    searchType: 'ingredient', // Default heavily requested by user
     allCategories: [],
     allAreas: [],
     allIngredients: [],
