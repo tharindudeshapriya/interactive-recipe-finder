@@ -33,7 +33,8 @@ const Ingredients = () => {
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        // Scroll just past the hero image to the start of the list
+        window.scrollTo({ top: window.innerWidth < 768 ? 400 : 500, behavior: 'smooth' });
     };
 
     return (
@@ -47,7 +48,7 @@ const Ingredients = () => {
                 <div className="absolute inset-0 bg-gradient-to-b from-bg-base/30 via-bg-base/70 to-bg-base"></div>
 
                 <div className="relative z-10 max-w-4xl mx-auto flex flex-col items-center">
-                    <span className="text-[10px] bg-bg-surface/90 font-bold uppercase tracking-[0.4em] text-text-base px-6 py-2 rounded-full mb-6 block animate-in fade-in slide-in-from-bottom-2 duration-700 shadow-sm">The Library</span>
+                    <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-primary bg-bg-base/80 px-4 py-2 rounded-full inline-block backdrop-blur-sm mb-6 animate-in fade-in slide-in-from-bottom-2 duration-700">The Library</span>
                     <h1 className="text-5xl md:text-7xl font-serif text-text-base mb-8 leading-tight animate-in fade-in slide-in-from-bottom-4 duration-1000">
                         Know Your <br /> <span className="italic font-light">Ingredients</span>
                     </h1>

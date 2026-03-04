@@ -50,6 +50,8 @@ const Home = () => {
 
     // Load initial data on mount
     useEffect(() => {
+        window.scrollTo(0, 0);
+
         const fetchLookupData = async () => {
             try {
                 if (allCategories.length === 0) {

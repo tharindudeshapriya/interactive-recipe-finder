@@ -99,7 +99,7 @@ const HomeHeroSection = ({
                         </button>
                     </div>
 
-                    <div className="flex flex-col md:flex-row max-w-2xl mx-auto gap-4 items-center">
+                    <div className="relative z-50 flex flex-col md:flex-row max-w-2xl mx-auto gap-4 items-center">
                         <div className="flex-grow w-full relative" ref={searchRef}>
                             <SearchBar
                                 value={searchTerm}
@@ -110,7 +110,7 @@ const HomeHeroSection = ({
                             >
                                 {/* Autocomplete Suggestions */}
                                 {showSuggestions && suggestions.length > 0 && (
-                                    <div className="absolute left-0 right-0 mt-2 bg-bg-surface border border-neutral-light/30 rounded-2xl shadow-xl z-[100] overflow-hidden transition-all duration-300 origin-top animate-in fade-in slide-in-from-top-2">
+                                    <div className="absolute left-0 right-0 mt-2 bg-bg-surface border border-neutral-light/30 rounded-2xl shadow-xl z-50 overflow-hidden transition-all duration-300 origin-top animate-in fade-in slide-in-from-top-2">
                                         <div className="py-2">
                                             {suggestions.map((item) => (
                                                 <button
@@ -149,7 +149,7 @@ const HomeHeroSection = ({
                             </button>
 
                             {/* Custom Dropdown Menu */}
-                            <div className={`absolute left-0 right-0 mt-2 bg-bg-surface border border-neutral-light/30 rounded-2xl shadow-xl z-[100] overflow-hidden transition-all duration-300 origin-top overflow-y-auto max-h-80 ${isAreaOpen ? 'opacity-100 scale-y-100' : 'opacity-0 scale-y-0 pointer-events-none'}`}>
+                            <div className={`absolute left-0 right-0 mt-2 bg-bg-surface border border-neutral-light/30 rounded-2xl shadow-xl z-50 overflow-hidden transition-all duration-300 origin-top overflow-y-auto max-h-80 ${isAreaOpen ? 'opacity-100 scale-y-100' : 'opacity-0 scale-y-0 pointer-events-none'}`}>
                                 <div className="py-2">
                                     <button
                                         onClick={() => {
@@ -189,7 +189,7 @@ const HomeHeroSection = ({
                                 {showCategoriesMobile ? 'Hide' : 'Show'}
                             </button>
                         </div>
-                        <div className={`justify-center items-center gap-2 md:gap-x-6 gap-y-4 ${showCategoriesMobile ? 'flex flex-wrap' : 'hidden md:flex md:flex-wrap'}`}>
+                        <div className={`justify-center items-center gap-2 md:gap-x-6 gap-y-4 flex flex-wrap transition-all duration-500 overflow-hidden ${showCategoriesMobile ? 'max-h-[1000px] opacity-100 mt-6' : 'max-h-0 opacity-0 md:max-h-[1000px] md:opacity-100'} md:mt-0`}>
                             {allCategories.map((cat) => (
                                 <button
                                     key={cat.idCategory}
