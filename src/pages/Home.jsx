@@ -6,7 +6,9 @@ import RecipeCard from '../components/RecipeCard';
 import LoadingSpinner from '../components/LoadingSpinner';
 import CategoryCarousel from '../components/CategoryCarousel';
 import SearchBar from '../components/SearchBar';
-import FeatureCard from '../components/FeatureCard';
+import RecipeFeatureCard from '../components/RecipeFeatureCard';
+import IngredientFeatureCard from '../components/IngredientFeatureCard';
+import CarouselContainer from '../components/CarouselContainer';
 import { Link } from 'react-router-dom';
 
 const Home = () => {
@@ -319,29 +321,33 @@ const Home = () => {
                     </div>
                 </div>
 
-                <div className="mt-8 md:mt-12 flex flex-wrap justify-center items-center gap-2 md:gap-x-6 gap-y-3">
-                    {allCategories.map((cat) => (
-                        <button
-                            key={cat.idCategory}
-                            onClick={() => handleCategoryClick(cat.strCategory)}
-                            className={`text-[10px] md:text-sm font-medium tracking-wider uppercase transition-all px-4 py-2 md:p-0 rounded-full md:rounded-none border md:border-0 ${searchTerm === cat.strCategory && !isShowingInspiration
-                                ? 'bg-text-base text-bg-base border-text-base md:bg-transparent md:text-text-base'
-                                : 'text-neutral-dark hover:text-text-base border-neutral-light/30 hover:border-text-base md:border-transparent md:hover:border-transparent'
-                                } relative md:after:content-[''] md:after:absolute md:after:-bottom-1 md:after:left-0 md:after:w-0 md:after:h-[1px] md:after:bg-text-base md:hover:after:w-full md:after:transition-all md:after:duration-300`}
-                        >
-                            {cat.strCategory}
-                        </button>
-                    ))}
+                <div className="mt-12 md:mt-16">
+                    <h3 className="text-[10px] font-bold uppercase tracking-[0.3em] text-primary mb-6">
+                        Available Categories
+                    </h3>
+                    <div className="flex flex-wrap justify-center items-center gap-2 md:gap-x-6 gap-y-4">
+                        {allCategories.map((cat) => (
+                            <button
+                                key={cat.idCategory}
+                                onClick={() => handleCategoryClick(cat.strCategory)}
+                                className={`text-[10px] md:text-sm font-medium tracking-wider uppercase transition-all px-4 py-2 md:p-0 rounded-full md:rounded-none border md:border-0 ${searchTerm === cat.strCategory && !isShowingInspiration
+                                    ? 'bg-text-base text-bg-base border-text-base md:bg-transparent md:text-text-base'
+                                    : 'text-neutral-dark hover:text-text-base border-neutral-light/30 hover:border-text-base md:border-transparent md:hover:border-transparent'
+                                    } relative md:after:content-[''] md:after:absolute md:after:-bottom-1 md:after:left-0 md:after:w-0 md:after:h-[1px] md:after:bg-text-base md:hover:after:w-full md:after:transition-all md:after:duration-300`}
+                            >
+                                {cat.strCategory}
+                            </button>
+                        ))}
+                    </div>
                 </div>
             </section>
 
-            {/* Curated Curation Sections (Only show when not searching) */}
+            {/* Curated Discovery Sections */}
             {isShowingInspiration && (
                 <div className="max-w-7xl mx-auto px-6 mb-16 animate-in fade-in slide-in-from-bottom-4 duration-1000">
 
                     {/* 1. Recipe of the Day */}
-                    <FeatureCard
-                        type="recipe"
+                    <RecipeFeatureCard
                         data={recipeOfTheDay}
                         onRefresh={refreshRecipeOfTheDay}
                         loading={!recipeOfTheDay}
@@ -363,72 +369,89 @@ const Home = () => {
                     />
 
                     {/* 3. Ingredient Spotlight Carousel */}
-                    <section className="mb-24">
-                        <div className="flex justify-between items-end mb-8 px-2">
-                            <div>
-                                <h2 className="text-3xl md:text-4xl font-serif text-text-base mb-2">Pantry Spotlight</h2>
-                                <p className="text-neutral-dark font-light italic">Master the building blocks of exceptional flavor.</p>
-                            </div>
-                            <button
-                                onClick={refreshIngredients}
-                                className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-neutral-dark hover:text-primary transition-colors group"
-                            >
-                                <svg className="w-4 h-4 group-hover:rotate-180 transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
-                                Shuffle Ingredients
-                            </button>
-                        </div>
-                        <div className="flex overflow-x-auto pb-8 gap-6 scrollbar-hide snap-x snap-mandatory -mx-6 px-6">
-                            {dailyIngredients.map((ing) => (
-                                <div key={ing.idIngredient} className="min-w-full md:min-w-[80%] lg:min-w-[70%] snap-start">
-                                    <FeatureCard
-                                        type="ingredient"
+                    <CarouselContainer
+                        title="Pantry Spotlight"
+                        description="Master the building blocks of exceptional flavor."
+                        onRefresh={refreshIngredients}
+                        refreshText="Shuffle Ingredients"
+                        autoScroll={true}
+                        interval={6000}
+                    >
+                        {dailyIngredients.length === 0 ? (
+                            Array.from({ length: 3 }).map((_, i) => (
+                                <div key={i} className="min-w-full md:min-w-[80%] lg:min-w-[70%] h-[400px] bg-neutral-light/5 animate-pulse rounded-3xl" />
+                            ))
+                        ) : (
+                            dailyIngredients.map((ing) => (
+                                <div key={ing.idIngredient} className="min-w-full md:min-w-[80%] lg:min-w-[70%] snap-start h-full">
+                                    <IngredientFeatureCard
                                         data={ing}
                                         onAction={handleSuggestionClick}
                                     />
                                 </div>
-                            ))}
-                        </div>
-                    </section>
+                            ))
+                        )}
+                    </CarouselContainer>
                 </div>
             )}
 
-            {/* 4. Results Section (The Archive) */}
+            {/* 4. Results Section (The Archive or Search Results) */}
             <section className="max-w-7xl mx-auto px-6 mb-24">
-                <div className="flex flex-col sm:flex-row justify-between items-center sm:items-baseline mb-8 md:mb-12 border-b border-neutral-light/20 pb-4">
-                    <h2 className="text-2xl md:text-3xl font-serif text-text-base">
-                        {isShowingInspiration ? 'The Archive' : 'Search Results'}
-                    </h2>
-                    {isShowingInspiration && (
-                        <button
-                            onClick={loadInspiration}
-                            disabled={loading}
-                            className="mt-4 sm:mt-0 text-[10px] font-bold uppercase tracking-widest text-neutral-dark hover:text-text-base transition-colors flex items-center gap-2 group"
-                        >
-                            <span className="group-hover:-rotate-180 transition-transform duration-500">
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                            </span>
-                            Shuffle Collection
-                        </button>
-                    )}
-                </div>
-
-                {loading && recipes.length === 0 ? (
-                    <LoadingSpinner />
-                ) : error ? (
-                    <div className="text-center py-20 animate-in fade-in duration-700">
-                        <p className="text-xl md:text-2xl font-light text-neutral-dark italic mb-8">{error}</p>
-                        <button
-                            onClick={loadInspiration}
-                            className="px-8 py-3 bg-neutral-light/10 text-[10px] font-bold uppercase tracking-widest text-text-base hover:bg-neutral-light/20 transition-colors rounded-full"
-                        >
-                            Return to The Archive
-                        </button>
-                    </div>
+                {isShowingInspiration ? (
+                    /* Only Show Carousel for Curated Archive */
+                    <CarouselContainer
+                        title="The Archive"
+                        description="Explore our complete collection of seasonal favorites."
+                        onRefresh={loadInspiration}
+                        refreshText="Shuffle Collection"
+                        autoScroll={true}
+                        interval={7000}
+                    >
+                        {loading && recipes.length === 0 ? (
+                            Array.from({ length: 4 }).map((_, i) => (
+                                <div key={i} className="min-w-[280px] h-[400px] bg-neutral-light/5 animate-pulse rounded-2xl snap-start" />
+                            ))
+                        ) : (
+                            recipes.map((recipe) => (
+                                <div key={recipe.idMeal} className="min-w-[280px] snap-start">
+                                    <RecipeCard recipe={recipe} />
+                                </div>
+                            ))
+                        )}
+                    </CarouselContainer>
                 ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-12 md:gap-y-16">
-                        {recipes.map((recipe) => (
-                            <RecipeCard key={recipe.idMeal} recipe={recipe} />
-                        ))}
+                    /* Show standard Grid for Search Results */
+                    <div className="animate-in fade-in duration-700">
+                        <div className="flex flex-col sm:flex-row justify-between items-center sm:items-baseline mb-12 border-b border-neutral-light/20 pb-4">
+                            <h2 className="text-2xl md:text-3xl font-serif text-text-base">
+                                Search Results
+                            </h2>
+                            <button
+                                onClick={loadInspiration}
+                                className="mt-4 sm:mt-0 text-[10px] font-bold uppercase tracking-widest text-neutral-dark hover:text-text-base transition-colors"
+                            >
+                                Clear Search
+                            </button>
+                        </div>
+
+                        {loading && recipes.length === 0 ? (
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-12">
+                                {Array.from({ length: 4 }).map((_, i) => (
+                                    <div key={i} className="h-[400px] bg-neutral-light/5 animate-pulse rounded-2xl" />
+                                ))}
+                            </div>
+                        ) : error ? (
+                            <div className="text-center py-20">
+                                <p className="text-xl md:text-2xl font-light text-neutral-dark italic mb-8">{error}</p>
+                                <button onClick={loadInspiration} className="px-8 py-3 bg-neutral-light/10 text-[10px] font-bold uppercase tracking-widest text-text-base hover:bg-neutral-light/20 transition-colors rounded-full">Return to The Archive</button>
+                            </div>
+                        ) : (
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-12 md:gap-y-16">
+                                {recipes.map((recipe) => (
+                                    <RecipeCard key={recipe.idMeal} recipe={recipe} />
+                                ))}
+                            </div>
+                        )}
                     </div>
                 )}
             </section>
