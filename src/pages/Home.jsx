@@ -7,34 +7,42 @@ import useCuratedRecipes from '../hooks/useCuratedRecipes';
 import useRecipeSearch from '../hooks/useRecipeSearch';
 
 // Components
-import HomeHeroSection from '../components/HomeHeroSection';
-import HomeCuratedSection from '../components/HomeCuratedSection';
-import HomeArchiveSection from '../components/HomeArchiveSection';
-import HomeSearchResults from '../components/HomeSearchResults';
+import HomeHeroSection from '../components/home/HomeHeroSection';
+import HomeCuratedSection from '../components/home/HomeCuratedSection';
+import HomeSearchResults from '../components/home/HomeSearchResults';
 
 const Home = () => {
     const dispatch = useDispatch();
-    const { searchTerm, results: recipes, isShowingInspiration, searchType, allCategories, allAreas, allIngredients } = useSelector((state) => state.search);
-
-    // 1. Fetch curated categories & daily items
     const {
+        searchTerm,
+        results: recipes,
+        isShowingInspiration,
+        searchType,
+        allCategories,
+        allAreas,
+        allIngredients,
+    } = useSelector((state) => state.search);
+
+    // Curated daily items (recipe of the day + ingredient spotlight)
+    const {
+        recipeOfTheDay,
+        refreshRecipeOfTheDay,
         seafoodRecipes,
         dessertRecipes,
         vegetarianRecipes,
-        recipeOfTheDay,
-        refreshRecipeOfTheDay,
         dailyIngredients,
-        refreshIngredients
+        refreshIngredients,
+        loading: curatedLoading,
     } = useCuratedRecipes(allIngredients);
 
-    // 3. Search logic, inspiration loading, and api states
+    // Search logic + area/category navigation
     const {
         loading,
         error,
         loadInspiration,
         handleSearch,
         handleAreaChange,
-        handleCategoryClick
+        handleCategoryClick,
     } = useRecipeSearch();
 
     // Load inspiration on mount if no recipes are loaded yet
@@ -57,41 +65,35 @@ const Home = () => {
             <HomeHeroSection
                 isShowingInspiration={isShowingInspiration}
                 searchType={searchType}
-                setSearchType={(type) => dispatch(setSearchType(type))}
+                onSearchTypeChange={(type) => dispatch(setSearchType(type))}
                 searchTerm={searchTerm}
-                setSearchTerm={(term) => dispatch(setSearchTerm(term))}
-                handleSearch={handleSearch}
+                onSearchTermChange={(term) => dispatch(setSearchTerm(term))}
+                onSearch={() => handleSearch(searchTerm)}
                 allIngredients={allIngredients}
                 allAreas={allAreas}
-                handleAreaChange={handleAreaChange}
+                onAreaChange={handleAreaChange}
                 allCategories={allCategories}
-                handleCategoryClick={handleCategoryClick}
-                handleSuggestionClick={handleSuggestionClick}
+                onCategoryClick={handleCategoryClick}
+                onSuggestionClick={handleSuggestionClick}
             />
 
-            {isShowingInspiration && (
+            {isShowingInspiration ? (
                 <HomeCuratedSection
                     recipeOfTheDay={recipeOfTheDay}
                     refreshRecipeOfTheDay={refreshRecipeOfTheDay}
                     seafoodRecipes={seafoodRecipes}
                     dessertRecipes={dessertRecipes}
                     vegetarianRecipes={vegetarianRecipes}
-                    loading={loading}
+                    curatedLoading={curatedLoading}
+                    allCategories={allCategories}
+                    allAreas={allAreas}
+                    onAreaChange={handleAreaChange}
                     refreshIngredients={refreshIngredients}
                     dailyIngredients={dailyIngredients}
                     handleSuggestionClick={handleSuggestionClick}
                 />
-            )}
-
-            <section className="max-w-7xl mx-auto px-6 mb-24">
-                {isShowingInspiration ? (
-                    <HomeArchiveSection
-                        recipes={recipes}
-                        loading={loading}
-                        error={error}
-                        loadInspiration={loadInspiration}
-                    />
-                ) : (
+            ) : (
+                <section className="max-w-7xl mx-auto px-6 mb-24">
                     <HomeSearchResults
                         recipes={recipes}
                         loading={loading}
@@ -99,8 +101,8 @@ const Home = () => {
                         loadInspiration={loadInspiration}
                         searchTerm={searchTerm}
                     />
-                )}
-            </section>
+                </section>
+            )}
         </div>
     );
 };

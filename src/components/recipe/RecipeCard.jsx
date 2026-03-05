@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React from 'react';
+import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { toggleFavorite, selectIsFavorite } from '../store/favoritesSlice';
+import { useState } from 'react';
+import { toggleFavorite, selectIsFavorite } from '../../store/favoritesSlice';
+import { useLocation } from 'react-router-dom';
 
 const RecipeCard = ({ recipe }) => {
     const dispatch = useDispatch();
@@ -16,10 +18,8 @@ const RecipeCard = ({ recipe }) => {
             setIsRemoving(true);
             setTimeout(() => {
                 dispatch(toggleFavorite(recipe));
-                if (!isFavoritesPage) {
-                    setIsRemoving(false);
-                }
-            }, 600); // Wait for the heartbreak/fade animation
+                if (!isFavoritesPage) setIsRemoving(false);
+            }, 600);
         } else {
             dispatch(toggleFavorite(recipe));
         }

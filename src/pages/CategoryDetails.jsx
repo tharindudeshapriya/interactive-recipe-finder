@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { searchRecipesByCategory } from '../services/recipeApi';
-import RecipeCard from '../components/RecipeCard';
-import LoadingSpinner from '../components/LoadingSpinner';
-import Pagination from '../components/Pagination';
+import { ITEMS_PER_PAGE } from '../constants';
+import RecipeCard from '../components/recipe/RecipeCard';
+import LoadingSpinner from '../components/common/LoadingSpinner';
+import Pagination from '../components/common/Pagination';
 
 const CategoryDetails = () => {
     const { categoryName } = useParams();
@@ -13,7 +14,6 @@ const CategoryDetails = () => {
     const [loadingRecipes, setLoadingRecipes] = useState(true);
     const [error, setError] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 15;
 
     // Find the current category object to get its details
     const categoryDetails = allCategories.find(
@@ -21,18 +21,17 @@ const CategoryDetails = () => {
     );
 
     useEffect(() => {
+        const controller = new AbortController();
+
         const fetchCategoryRecipes = async () => {
             setLoadingRecipes(true);
             setError(null);
             try {
-                const results = await searchRecipesByCategory(categoryName);
-                if (results) {
-                    setRecipes(results);
-                    setCurrentPage(1); // Reset page on category change
-                } else {
-                    setError(`No recipes found for category: ${categoryName}`);
-                }
+                const results = await searchRecipesByCategory(categoryName, controller.signal);
+                setRecipes(results);
+                setCurrentPage(1);
             } catch (err) {
+                if (err.name === 'AbortError') return; // Navigated away — ignore
                 setError('Failed to fetch category recipes. Please try again later.');
             } finally {
                 setLoadingRecipes(false);
@@ -42,12 +41,14 @@ const CategoryDetails = () => {
         if (categoryName) {
             fetchCategoryRecipes();
         }
+
+        return () => controller.abort();
     }, [categoryName]);
 
-    const totalPages = Math.ceil(recipes.length / itemsPerPage);
+    const totalPages = Math.ceil(recipes.length / ITEMS_PER_PAGE);
     const currentRecipes = recipes.slice(
-        (currentPage - 1) * itemsPerPage,
-        currentPage * itemsPerPage
+        (currentPage - 1) * ITEMS_PER_PAGE,
+        currentPage * ITEMS_PER_PAGE
     );
 
     const handlePageChange = (page) => {
@@ -111,7 +112,7 @@ const CategoryDetails = () => {
                 <div className="w-24 h-[1px] bg-neutral-light/30 mx-auto mt-12 mb-8"></div>
 
                 <div className="flex justify-end animate-in fade-in slide-in-from-bottom-8 duration-1000">
-                    {recipes.length > itemsPerPage && (
+                    {recipes.length > ITEMS_PER_PAGE && (
                         <Pagination
                             currentPage={currentPage}
                             totalPages={totalPages}

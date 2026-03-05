@@ -4,21 +4,16 @@ const Pagination = ({
     currentPage,
     totalPages,
     onPageChange,
-    className = "mt-16 justify-center" // Default to center for bottom
+    className = "mt-16 justify-center"
 }) => {
-    // Hide completely if there's only 1 page or no data
     if (totalPages <= 1) return null;
 
     const pageNumbers = [];
     let startPage = Math.max(1, currentPage - 2);
     let endPage = Math.min(totalPages, currentPage + 2);
 
-    if (currentPage <= 3) {
-        endPage = Math.min(5, totalPages);
-    }
-    if (currentPage >= totalPages - 2) {
-        startPage = Math.max(1, totalPages - 4);
-    }
+    if (currentPage <= 3) endPage = Math.min(5, totalPages);
+    if (currentPage >= totalPages - 2) startPage = Math.max(1, totalPages - 4);
 
     for (let i = startPage; i <= endPage; i++) {
         pageNumbers.push(i);
@@ -26,8 +21,6 @@ const Pagination = ({
 
     return (
         <div className={`flex flex-wrap items-center gap-4 md:gap-8 animate-in fade-in duration-500 w-full col-span-full ${className}`}>
-
-            {/* Page Navigation Controls */}
             {totalPages > 1 && (
                 <div className="flex items-center gap-2">
                     <button

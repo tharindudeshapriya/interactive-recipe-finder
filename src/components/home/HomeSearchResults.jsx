@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import RecipeCard from './RecipeCard';
-import Pagination from './Pagination';
+import { ITEMS_PER_PAGE } from '../../constants';
+import RecipeCard from '../recipe/RecipeCard';
+import Pagination from '../common/Pagination';
 
 const HomeSearchResults = ({ recipes, loading, error, loadInspiration, searchTerm }) => {
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 15;
 
     useEffect(() => {
         setCurrentPage(1);
     }, [recipes]);
 
-    const totalPages = Math.ceil(recipes.length / itemsPerPage);
+    const totalPages = Math.ceil(recipes.length / ITEMS_PER_PAGE);
     const currentRecipes = recipes.slice(
-        (currentPage - 1) * itemsPerPage,
-        currentPage * itemsPerPage
+        (currentPage - 1) * ITEMS_PER_PAGE,
+        currentPage * ITEMS_PER_PAGE
     );
 
     const { allAreas } = useSelector((state) => state.search);
@@ -28,6 +28,7 @@ const HomeSearchResults = ({ recipes, loading, error, loadInspiration, searchTer
             window.scrollTo({ top: offset, behavior: 'smooth' });
         }
     };
+
     return (
         <div className="animate-in fade-in duration-700" id="search-results-top">
             <div className="flex flex-col sm:flex-row justify-between items-center sm:items-end mb-12 border-b border-neutral-light/20 pb-4 gap-4">
@@ -44,8 +45,7 @@ const HomeSearchResults = ({ recipes, loading, error, loadInspiration, searchTer
                 </h2>
 
                 <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-8 w-full sm:w-auto">
-                    {/* Always render Top Pagination if we have recipes to show */}
-                    {recipes.length > itemsPerPage && (
+                    {recipes.length > ITEMS_PER_PAGE && (
                         <div className="flex-1 w-full sm:w-auto flex justify-end">
                             <Pagination
                                 currentPage={currentPage}

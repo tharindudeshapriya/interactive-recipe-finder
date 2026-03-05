@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { clearSearch } from '../store/searchSlice'
+import { clearSearch } from '../../store/searchSlice'
 
 const Navbar = () => {
     const location = useLocation();
@@ -98,9 +98,8 @@ const Navbar = () => {
                 onClick={() => setIsOpen(false)}
             />
 
-            {/* Mobile Navigation Panel — half-width slide-in from right */}
+            {/* Mobile Navigation Panel */}
             <div className={`md:hidden fixed top-0 right-0 h-full w-1/2 z-[110] bg-bg-surface border-l border-text-base/10 shadow-2xl flex flex-col transition-transform duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-                {/* Panel header matching navbar height */}
                 <div className="flex items-center justify-between px-4 py-4 border-b border-text-base/10">
                     <span className="text-xs font-bold uppercase tracking-widest text-neutral-dark">Menu</span>
                     <button
@@ -114,7 +113,6 @@ const Navbar = () => {
                     </button>
                 </div>
 
-                {/* Nav links */}
                 <nav className="flex flex-col justify-center flex-grow gap-8 px-6">
                     <Link to="/" onClick={handleGoHome} className={`text-2xl font-serif tracking-tight transition-colors hover:text-primary ${location.pathname === '/' ? 'text-primary' : 'text-text-base'}`}>Home</Link>
                     <Link to="/categories" onClick={() => setIsOpen(false)} className={`text-2xl font-serif tracking-tight transition-colors hover:text-primary ${location.pathname.startsWith('/categories') ? 'text-primary' : 'text-text-base'}`}>Categories</Link>
@@ -129,7 +127,6 @@ const Navbar = () => {
                     </Link>
                 </nav>
 
-                {/* Panel footer */}
                 <div className="px-6 py-6 border-t border-text-base/10">
                     <p className="text-[10px] font-light uppercase tracking-widest text-neutral-light italic">The Culinary Archive</p>
                 </div>

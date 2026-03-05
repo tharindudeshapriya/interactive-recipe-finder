@@ -3,24 +3,19 @@ import { Link } from 'react-router-dom';
 
 const RecipeFeatureCard = ({ data, onRefresh, loading }) => {
     if (loading) {
-        return (
-            <div className="mb-24 h-[500px] bg-neutral-light/5 animate-pulse rounded-[2rem] border border-neutral-light/10" />
-        );
+        return <div className="mb-24 h-[500px] bg-neutral-light/5 animate-pulse rounded-[2rem] border border-neutral-light/10" />;
     }
 
     if (!data) return null;
 
     return (
         <div className="mb-24 relative group overflow-hidden rounded-[2.5rem] bg-bg-surface border border-neutral-light/20 p-6 md:p-12 flex flex-col lg:flex-row items-center gap-10 md:gap-16 transition-all duration-700 hover:shadow-3xl">
-            {/* Background Decorative Element */}
             <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-96 h-96 bg-primary/5 rounded-full blur-[100px] pointer-events-none" />
 
             <div className="flex-[1.2] order-2 lg:order-1 relative">
                 <div className="inline-flex items-center gap-3 px-4 py-2 bg-primary/10 rounded-full mb-8">
                     <span className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse" />
-                    <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">
-                        Featured Selection
-                    </span>
+                    <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Featured Selection</span>
                 </div>
 
                 <h2 className="text-4xl md:text-6xl font-serif text-text-base mb-6 leading-tight">
@@ -28,9 +23,7 @@ const RecipeFeatureCard = ({ data, onRefresh, loading }) => {
                 </h2>
 
                 <div className="mb-8 p-6 bg-neutral-light/5 rounded-2xl border-l-4 border-primary">
-                    <h3 className="text-2xl md:text-3xl font-serif text-text-base mb-3 group-hover:text-primary transition-colors">
-                        {data.strMeal}
-                    </h3>
+                    <h3 className="text-2xl md:text-3xl font-serif text-text-base mb-3 group-hover:text-primary transition-colors">{data.strMeal}</h3>
                     <p className="text-neutral-dark font-light leading-relaxed text-sm md:text-base">
                         Explore this exquisite {data.strCategory.toLowerCase()} dish from {data.strArea}. A perfect blend of tradition and flavor.
                     </p>
@@ -58,7 +51,6 @@ const RecipeFeatureCard = ({ data, onRefresh, loading }) => {
             </div>
 
             <div className="flex-1 order-1 lg:order-2 w-full lg:max-w-md relative group/img">
-                {/* Image Wrapper with heavy rounding */}
                 <div className="relative aspect-square overflow-hidden rounded-[2rem] md:rounded-[3rem] shadow-2xl border-4 border-white transform lg:rotate-3 group-hover/img:rotate-0 transition-all duration-700">
                     <img
                         src={data.strMealThumb}
@@ -68,8 +60,6 @@ const RecipeFeatureCard = ({ data, onRefresh, loading }) => {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover/img:opacity-100 transition-opacity duration-500" />
                 </div>
-
-                {/* Decorative dots */}
                 <div className="absolute -bottom-4 -left-4 w-16 h-16 bg-[radial-gradient(circle,currentColor_1px,transparent_1px)] bg-[size:8px_8px] text-primary/20 pointer-events-none" />
             </div>
         </div>

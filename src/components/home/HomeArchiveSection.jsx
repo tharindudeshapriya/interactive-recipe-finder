@@ -1,6 +1,6 @@
 import React from 'react';
-import CarouselContainer from './CarouselContainer';
-import RecipeCard from './RecipeCard';
+import CarouselContainer from '../common/CarouselContainer';
+import RecipeCard from '../recipe/RecipeCard';
 
 const HomeArchiveSection = ({ recipes, loading, error, loadInspiration }) => {
     return (
