@@ -22,7 +22,7 @@
 
 @layer base {
     .dark {
-        /* Theme Colors (Adjusted for dark mode if desired, or kept same) */
+        /* Theme Colors (Adjusted for dark mode ) */
         --color-bg-base: #121212;
         --color-bg-surface: #1e1e1e;
         --color-text-base: #f9f9f9;

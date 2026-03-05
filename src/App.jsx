@@ -10,12 +10,14 @@ import Categories from './pages/Categories'
 import CategoryDetails from './pages/CategoryDetails'
 import ScrollToTopButton from './components/layout/ScrollToTopButton'
 import useLookupData from './hooks/useLookupData'
+import ScrollManager from './components/layout/ScrollManager'
 
 function App() {
   useLookupData();
 
   return (
     <Router>
+      <ScrollManager />
       <div className="min-h-screen flex flex-col bg-bg-base text-text-base font-sans transition-colors duration-300">
         <Navbar />
 
