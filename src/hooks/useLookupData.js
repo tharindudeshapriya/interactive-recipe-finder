@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { listAllCategories, listAllAreas, listAllIngredients } from '../services/recipeApi';
-import { setAllCategories, setAllAreas, setAllIngredients } from '../store/searchSlice';
+import { setAllCategories, setAllAreas, setAllIngredients, setLookupStatus } from '../store/searchSlice';
 
 const useLookupData = () => {
     const dispatch = useDispatch();
@@ -12,6 +12,7 @@ const useLookupData = () => {
         if (isMounted.current) return;
 
         const fetchLookupData = async () => {
+            dispatch(setLookupStatus('loading'));
             try {
                 if (allCategories.length === 0) {
                     const cats = await listAllCategories();
@@ -25,8 +26,10 @@ const useLookupData = () => {
                     const ingredients = await listAllIngredients();
                     dispatch(setAllIngredients(ingredients));
                 }
+                dispatch(setLookupStatus('succeeded'));
             } catch (err) {
                 console.error('Failed to load lookup data', err);
+                dispatch(setLookupStatus('failed'));
             }
         };
 

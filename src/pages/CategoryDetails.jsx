@@ -8,9 +8,9 @@ import Pagination from '../components/Pagination';
 
 const CategoryDetails = () => {
     const { categoryName } = useParams();
-    const { allCategories } = useSelector((state) => state.search);
+    const { allCategories, lookupStatus } = useSelector((state) => state.search);
     const [recipes, setRecipes] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [loadingRecipes, setLoadingRecipes] = useState(true);
     const [error, setError] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 15;
@@ -22,7 +22,7 @@ const CategoryDetails = () => {
 
     useEffect(() => {
         const fetchCategoryRecipes = async () => {
-            setLoading(true);
+            setLoadingRecipes(true);
             setError(null);
             try {
                 const results = await searchRecipesByCategory(categoryName);
@@ -35,7 +35,7 @@ const CategoryDetails = () => {
             } catch (err) {
                 setError('Failed to fetch category recipes. Please try again later.');
             } finally {
-                setLoading(false);
+                setLoadingRecipes(false);
             }
         };
 
@@ -55,7 +55,10 @@ const CategoryDetails = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    if (loading) return <LoadingSpinner />;
+    const isGlobalDataReady = lookupStatus === 'succeeded' || lookupStatus === 'failed' || allCategories.length > 0;
+    const isLoading = loadingRecipes || !isGlobalDataReady;
+
+    if (isLoading) return <LoadingSpinner />;
 
     if (error) {
         return (

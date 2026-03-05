@@ -10,34 +10,38 @@ const IngredientDetails = () => {
     const { name } = useParams();
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const { allIngredients } = useSelector((state) => state.search);
+    const { allIngredients, lookupStatus } = useSelector((state) => state.search);
 
     const [ingredient, setIngredient] = useState(null);
     const [recipes, setRecipes] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [loadingRecipes, setLoadingRecipes] = useState(true);
 
+    // Fetch recipes associated with the ingredient
     useEffect(() => {
-        const fetchDetails = async () => {
-            setLoading(true);
+        const fetchRecipes = async () => {
+            setLoadingRecipes(true);
             try {
-                // Find ingredient info from the pre-fetched list
-                const found = allIngredients.find(ing => ing.strIngredient === name);
-                setIngredient(found);
-
-                // Fetch recipes using this ingredient
                 const results = await searchRecipesByIngredient(name);
                 setRecipes(results || []);
             } catch (err) {
-                console.error("Failed to fetch ingredient details", err);
+                console.error("Failed to fetch recipes for ingredient", err);
             } finally {
-                setLoading(false);
+                setLoadingRecipes(false);
             }
         };
 
+        fetchRecipes();
+    }, [name]);
+
+    // Resolve ingredient details from global store
+    useEffect(() => {
         if (allIngredients.length > 0) {
-            fetchDetails();
+            const found = allIngredients.find(ing => ing.strIngredient === name);
+            setIngredient(found || { strIngredient: name, strDescription: 'No detailed description available.' });
+        } else if (lookupStatus === 'failed') {
+            setIngredient({ strIngredient: name, strDescription: 'Could not load ingredient details.' });
         }
-    }, [name, allIngredients]);
+    }, [name, allIngredients, lookupStatus]);
 
     const handleExploreClick = () => {
         dispatch(setSearchTerm(name));
@@ -46,7 +50,9 @@ const IngredientDetails = () => {
         navigate('/');
     };
 
-    if (loading) return <div className="pt-20"><LoadingSpinner /></div>;
+    const isLoading = loadingRecipes || (lookupStatus === 'loading' && allIngredients.length === 0) || (lookupStatus === 'idle' && allIngredients.length === 0);
+
+    if (isLoading) return <div className="pt-20"><LoadingSpinner /></div>;
     if (!ingredient) return <div className="pt-20 text-center">Ingredient not found</div>;
 
     return (
@@ -95,7 +101,7 @@ const IngredientDetails = () => {
                     title={`Recipes with ${ingredient.strIngredient}`}
                     description={`Discover dishes that feature ${ingredient.strIngredient} as a primary component.`}
                     recipes={recipes}
-                    loading={loading}
+                    loading={isLoading}
                 />
             </section>
         </div>

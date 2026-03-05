@@ -8,6 +8,7 @@ const initialState = {
     allCategories: [],
     allAreas: [],
     allIngredients: [],
+    lookupStatus: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
 };
 
 const searchSlice = createSlice({
@@ -38,6 +39,9 @@ const searchSlice = createSlice({
         setAllIngredients: (state, action) => {
             state.allIngredients = action.payload;
         },
+        setLookupStatus: (state, action) => {
+            state.lookupStatus = action.payload;
+        },
         clearSearch: (state) => {
             state.searchTerm = '';
             state.results = [];
@@ -54,6 +58,7 @@ export const {
     setAllCategories,
     setAllAreas,
     setAllIngredients,
+    setLookupStatus,
     clearSearch
 } = searchSlice.actions;
 

@@ -30,9 +30,13 @@ const Navbar = () => {
     return (
         <nav className="bg-bg-surface border-b border-text-base/10 sticky top-0 z-50">
             <div className="max-w-7xl mx-auto px-4 md:px-6 py-4 md:py-5 flex justify-between items-center relative z-50 bg-bg-surface">
-                <Link to="/" onClick={handleGoHome} className="text-xl md:text-2xl font-serif text-text-base tracking-tight hover:opacity-80 transition-opacity whitespace-nowrap relative z-50">
-                    The Culinary <span className="hidden xs:inline italic font-light">Archive</span>
-                    <span className="xs:hidden italic font-light"> Arch.</span>
+                <Link to="/" onClick={handleGoHome} className="flex items-center text-xl md:text-2xl font-serif text-text-base tracking-tight hover:opacity-80 transition-opacity whitespace-nowrap relative z-50">
+                    <svg className="w-5 h-5 md:w-6 md:h-6 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z" />
+                        <line x1="6" x2="18" y1="17" y2="17" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} />
+                    </svg>
+                    The Culinary <span className="hidden xs:inline italic font-light ml-1">Archive</span>
+                    <span className="xs:hidden italic font-light ml-1">Arch.</span>
                 </Link>
 
                 {/* Desktop Navigation */}
