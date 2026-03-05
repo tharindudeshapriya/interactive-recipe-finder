@@ -25,7 +25,7 @@ const CarouselContainer = ({
 
                 if (maxScroll <= 0) return;
 
-                // If we are near the end (40px buffer), scroll back to start
+                // Scroll back to start if near the end (40px buffer)
                 if (scrollLeft >= maxScroll - 40) {
                     scrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
                 } else {

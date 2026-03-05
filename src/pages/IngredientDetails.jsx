@@ -20,7 +20,7 @@ const IngredientDetails = () => {
         const fetchDetails = async () => {
             setLoading(true);
             try {
-                // Find ingredient info from our pre-fetched list
+                // Find ingredient info from the pre-fetched list
                 const found = allIngredients.find(ing => ing.strIngredient === name);
                 setIngredient(found);
 

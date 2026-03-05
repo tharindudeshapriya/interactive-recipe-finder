@@ -37,7 +37,7 @@ const Home = () => {
         handleCategoryClick
     } = useRecipeSearch();
 
-    // Ensure we load inspiration on mount if no recipes are loaded yet
+    // Load inspiration on mount if no recipes are loaded yet
     useEffect(() => {
         window.scrollTo(0, 0);
         if (recipes.length === 0 && isShowingInspiration) {

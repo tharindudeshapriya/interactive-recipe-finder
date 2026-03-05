@@ -15,7 +15,7 @@ const Favorites = () => {
 
     const totalPages = Math.ceil(favoriteRecipes.length / itemsPerPage);
 
-    // If items are removed and we're on a page that no longer exists, go back
+    // Navigate back if items are removed and the current page no longer exists
     useEffect(() => {
         if (currentPage > totalPages && totalPages > 0) {
             setCurrentPage(totalPages);

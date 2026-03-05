@@ -4,7 +4,7 @@ const initialState = {
     searchTerm: '',
     results: [],
     isShowingInspiration: true,
-    searchType: 'ingredient', // Default heavily requested by user
+    searchType: 'ingredient', // Default search type
     allCategories: [],
     allAreas: [],
     allIngredients: [],
@@ -19,7 +19,7 @@ const searchSlice = createSlice({
         },
         setSearchResults: (state, action) => {
             state.results = action.payload;
-            state.isShowingInspiration = false; // Once you search, you are viewing results
+            state.isShowingInspiration = false; // Switch to results view upon search
         },
         setInspirationResults: (state, action) => {
             state.results = action.payload;
