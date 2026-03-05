@@ -1,18 +1,20 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useSearchParams } from 'react-router-dom';
 import { setSearchTerm, setSearchType } from '../store/searchSlice';
 
-// Custom Hooks
 import useCuratedRecipes from '../hooks/useCuratedRecipes';
 import useRecipeSearch from '../hooks/useRecipeSearch';
 
-// Components
 import HomeHeroSection from '../components/home/HomeHeroSection';
 import HomeCuratedSection from '../components/home/HomeCuratedSection';
 import HomeSearchResults from '../components/home/HomeSearchResults';
 
 const Home = () => {
     const dispatch = useDispatch();
+    const [searchParams] = useSearchParams();
+    const urlQuery = searchParams.get('q');
+
     const {
         searchTerm,
         results: recipes,
@@ -23,7 +25,6 @@ const Home = () => {
         allIngredients,
     } = useSelector((state) => state.search);
 
-    // Curated daily items (recipe of the day + ingredient spotlight)
     const {
         recipeOfTheDay,
         refreshRecipeOfTheDay,
@@ -35,28 +36,31 @@ const Home = () => {
         loading: curatedLoading,
     } = useCuratedRecipes(allIngredients);
 
-    // Search logic + area/category navigation
     const {
         loading,
         error,
         loadInspiration,
         handleSearch,
+        handleTypeChange,
         handleAreaChange,
         handleCategoryClick,
     } = useRecipeSearch();
 
-    // Load inspiration on mount if no recipes are loaded yet
     useEffect(() => {
         window.scrollTo(0, 0);
-        if (recipes.length === 0 && isShowingInspiration) {
+
+        if (recipes.length === 0 && !searchTerm && !loading && !urlQuery) {
             loadInspiration();
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    useEffect(() => {
+        if (!isShowingInspiration) {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    }, [isShowingInspiration]);
+
     const handleSuggestionClick = (ingredient) => {
-        dispatch(setSearchTerm(ingredient));
-        dispatch(setSearchType('ingredient'));
         handleSearch(ingredient);
     };
 
@@ -65,7 +69,7 @@ const Home = () => {
             <HomeHeroSection
                 isShowingInspiration={isShowingInspiration}
                 searchType={searchType}
-                onSearchTypeChange={(type) => dispatch(setSearchType(type))}
+                onSearchTypeChange={handleTypeChange}
                 searchTerm={searchTerm}
                 onSearchTermChange={(term) => dispatch(setSearchTerm(term))}
                 onSearch={() => handleSearch(searchTerm)}

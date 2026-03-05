@@ -4,11 +4,11 @@ const initialState = {
     searchTerm: '',
     results: [],
     isShowingInspiration: true,
-    searchType: 'ingredient', // Default search type
+    searchType: 'name',
     allCategories: [],
     allAreas: [],
     allIngredients: [],
-    lookupStatus: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
+    lookupStatus: 'idle',
 };
 
 const searchSlice = createSlice({
@@ -20,7 +20,7 @@ const searchSlice = createSlice({
         },
         setSearchResults: (state, action) => {
             state.results = action.payload;
-            state.isShowingInspiration = false; // Switch to results view upon search
+            state.isShowingInspiration = false;
         },
         setInspirationResults: (state, action) => {
             state.results = action.payload;
@@ -46,6 +46,7 @@ const searchSlice = createSlice({
             state.searchTerm = '';
             state.results = [];
             state.isShowingInspiration = true;
+            state.searchType = 'name';
         }
     }
 });

@@ -10,7 +10,6 @@ const Navbar = () => {
     const { items } = useSelector(state => state.favorites);
     const favoritesCount = items.length;
 
-    // Theme state
     const [isDarkMode, setIsDarkMode] = useState(() => {
         if (typeof window !== 'undefined') {
             if ('theme' in localStorage) return localStorage.getItem('theme') === 'dark';
@@ -27,11 +26,10 @@ const Navbar = () => {
             }
         };
 
-        // Add listener
         if (mediaQuery?.addEventListener) {
             mediaQuery.addEventListener('change', handleChange);
         } else {
-            mediaQuery.addListener(handleChange); // Fallback for older browsers
+            mediaQuery.addListener(handleChange);
         }
 
         return () => {
@@ -56,8 +54,6 @@ const Navbar = () => {
             const nextMode = !prev;
             const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
-            // If user's toggle matches the system default, remove from localStorage
-            // so that we can resume tracking system default automatically!
             if (nextMode === systemTheme) {
                 localStorage.removeItem('theme');
             } else {
@@ -73,7 +69,6 @@ const Navbar = () => {
         setIsOpen(false);
     };
 
-    // Prevent scrolling when menu is open without causing layout shift
     useEffect(() => {
         if (isOpen) {
             const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
@@ -101,7 +96,6 @@ const Navbar = () => {
                     <span className="xs:hidden italic font-light ml-1">Arch.</span>
                 </Link>
 
-                {/* Desktop Navigation */}
                 <div className="hidden md:flex gap-4 md:gap-8 font-sans items-center">
                     <Link to="/" onClick={handleGoHome} className={`text-[10px] md:text-xs font-bold uppercase tracking-widest transition-colors relative after:content-[''] after:absolute after:-bottom-1 md:after:-bottom-2 after:left-0 after:h-[2px] after:bg-primary after:transition-all after:duration-300 ${location.pathname === '/' ? 'text-primary after:w-full' : 'text-neutral-dark hover:text-primary after:w-0 hover:after:w-full'}`}>HOME</Link>
                     <Link to="/categories" className={`text-[10px] md:text-xs font-bold uppercase tracking-widest transition-colors relative after:content-[''] after:absolute after:-bottom-1 md:after:-bottom-2 after:left-0 after:h-[2px] after:bg-primary after:transition-all after:duration-300 ${location.pathname.startsWith('/categories') ? 'text-primary after:w-full' : 'text-neutral-dark hover:text-primary after:w-0 hover:after:w-full'}`}>CATEGORIES</Link>
@@ -133,7 +127,6 @@ const Navbar = () => {
                     </button>
                 </div>
 
-                {/* Mobile Icons & Hamburger */}
                 <div className="md:hidden flex items-center gap-1 relative z-50">
                     <button
                         onClick={toggleTheme}
@@ -180,13 +173,11 @@ const Navbar = () => {
                 </div>
             </div>
 
-            {/* Mobile Nav Backdrop */}
             <div
                 className={`md:hidden fixed inset-0 z-[105] bg-black/40 backdrop-blur-sm transition-opacity duration-500 ${isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
                 onClick={() => setIsOpen(false)}
             />
 
-            {/* Mobile Navigation Panel */}
             <div className={`md:hidden fixed top-0 right-0 h-full w-1/2 z-[110] bg-bg-surface border-l border-text-base/10 shadow-2xl flex flex-col transition-transform duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
                 <div className="flex items-center justify-between px-4 py-4 border-b border-text-base/10">
                     <span className="text-xs font-bold uppercase tracking-widest text-neutral-dark">Menu</span>
