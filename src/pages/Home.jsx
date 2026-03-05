@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setSearchTerm, setSearchType } from '../store/searchSlice';
 
 // Custom Hooks
-import useLookupData from '../hooks/useLookupData';
 import useCuratedRecipes from '../hooks/useCuratedRecipes';
 import useRecipeSearch from '../hooks/useRecipeSearch';
 
@@ -17,10 +16,7 @@ const Home = () => {
     const dispatch = useDispatch();
     const { searchTerm, results: recipes, isShowingInspiration, searchType, allCategories, allAreas, allIngredients } = useSelector((state) => state.search);
 
-    // 1. Initial lookup data load
-    useLookupData();
-
-    // 2. Fetch curated categories & daily items
+    // 1. Fetch curated categories & daily items
     const {
         seafoodRecipes,
         dessertRecipes,

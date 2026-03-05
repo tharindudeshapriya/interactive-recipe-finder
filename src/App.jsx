@@ -9,8 +9,11 @@ import IngredientDetails from './pages/IngredientDetails'
 import Categories from './pages/Categories'
 import CategoryDetails from './pages/CategoryDetails'
 import ScrollToTopButton from './components/ScrollToTopButton'
+import useLookupData from './hooks/useLookupData'
 
 function App() {
+  useLookupData();
+
   return (
     <Router>
       <div className="min-h-screen flex flex-col bg-secondary/10 text-text-base font-sans">
