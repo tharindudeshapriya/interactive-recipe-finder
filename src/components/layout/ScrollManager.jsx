@@ -7,7 +7,7 @@ const ScrollManager = () => {
 
     useEffect(() => {
         // Scroll to top only on new navigations (PUSH or REPLACE).
-        // If navigating backwards (POP), we allow the browser to restore the previous scroll position.
+        // If navigating backwards (POP), allow the browser to restore the previous scroll position.
         if (navType !== 'POP') {
             window.scrollTo(0, 0);
         }
