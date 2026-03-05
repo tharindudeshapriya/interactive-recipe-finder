@@ -88,28 +88,47 @@ const Navbar = () => {
                 </div>
             </div>
 
-            {/* Mobile Navigation Overlay */}
-            <div className={`md:hidden fixed inset-0 z-[110] bg-bg-surface transition-transform duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] flex flex-col items-center justify-center space-y-12 ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-                <button
-                    onClick={() => setIsOpen(false)}
-                    className="absolute top-6 right-4 p-2 text-text-base focus:outline-none"
-                    aria-label="Close Menu"
-                >
-                    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
-                <Link to="/" onClick={handleGoHome} className={`text-4xl font-serif tracking-tight ${location.pathname === '/' ? 'text-primary' : 'text-text-base'}`}>HOME</Link>
-                <Link to="/categories" onClick={() => setIsOpen(false)} className={`text-4xl font-serif tracking-tight ${location.pathname.startsWith('/categories') ? 'text-primary' : 'text-text-base'}`}>CATEGORIES</Link>
-                <Link to="/ingredients" onClick={() => setIsOpen(false)} className={`text-4xl font-serif tracking-tight ${location.pathname.startsWith('/ingredient') ? 'text-primary' : 'text-text-base'}`}>INGREDIENTS</Link>
-                <Link to="/favorites" onClick={() => setIsOpen(false)} className={`text-4xl font-serif tracking-tight flex items-center gap-4 ${location.pathname === '/favorites' ? 'text-primary' : 'text-text-base'}`}>
-                    FAVORITES
-                    {favoritesCount > 0 && (
-                        <span className="bg-primary text-white text-lg w-8 h-8 flex items-center justify-center rounded-full font-sans">
-                            {favoritesCount}
-                        </span>
-                    )}
-                </Link>
+            {/* Mobile Nav Backdrop */}
+            <div
+                className={`md:hidden fixed inset-0 z-[105] bg-black/40 backdrop-blur-sm transition-opacity duration-500 ${isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
+                onClick={() => setIsOpen(false)}
+            />
+
+            {/* Mobile Navigation Panel — half-width slide-in from right */}
+            <div className={`md:hidden fixed top-0 right-0 h-full w-1/2 z-[110] bg-bg-surface border-l border-text-base/10 shadow-2xl flex flex-col transition-transform duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+                {/* Panel header matching navbar height */}
+                <div className="flex items-center justify-between px-4 py-4 border-b border-text-base/10">
+                    <span className="text-xs font-bold uppercase tracking-widest text-neutral-dark">Menu</span>
+                    <button
+                        onClick={() => setIsOpen(false)}
+                        className="p-2 text-text-base focus:outline-none hover:text-primary transition-colors"
+                        aria-label="Close Menu"
+                    >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+                {/* Nav links */}
+                <nav className="flex flex-col justify-center flex-grow gap-8 px-6">
+                    <Link to="/" onClick={handleGoHome} className={`text-2xl font-serif tracking-tight transition-colors hover:text-primary ${location.pathname === '/' ? 'text-primary' : 'text-text-base'}`}>Home</Link>
+                    <Link to="/categories" onClick={() => setIsOpen(false)} className={`text-2xl font-serif tracking-tight transition-colors hover:text-primary ${location.pathname.startsWith('/categories') ? 'text-primary' : 'text-text-base'}`}>Categories</Link>
+                    <Link to="/ingredients" onClick={() => setIsOpen(false)} className={`text-2xl font-serif tracking-tight transition-colors hover:text-primary ${location.pathname.startsWith('/ingredient') ? 'text-primary' : 'text-text-base'}`}>Ingredients</Link>
+                    <Link to="/favorites" onClick={() => setIsOpen(false)} className={`text-2xl font-serif tracking-tight flex items-center gap-3 transition-colors hover:text-primary ${location.pathname === '/favorites' ? 'text-primary' : 'text-text-base'}`}>
+                        Favorites
+                        {favoritesCount > 0 && (
+                            <span className="bg-primary text-white text-xs w-5 h-5 flex items-center justify-center rounded-full font-sans font-bold">
+                                {favoritesCount}
+                            </span>
+                        )}
+                    </Link>
+                </nav>
+
+                {/* Panel footer */}
+                <div className="px-6 py-6 border-t border-text-base/10">
+                    <p className="text-[10px] font-light uppercase tracking-widest text-neutral-light italic">The Culinary Archive</p>
+                </div>
             </div>
         </nav>
     )
