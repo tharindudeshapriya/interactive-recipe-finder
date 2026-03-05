@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { ITEMS_PER_PAGE } from '../constants';
 import RecipeCard from '../components/recipe/RecipeCard';
 import Pagination from '../components/common/Pagination';
 import useRandomBackground from '../hooks/useRandomBackground';
@@ -11,9 +12,8 @@ const Favorites = () => {
     const bgImage = useRandomBackground();
 
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 15;
 
-    const totalPages = Math.ceil(favoriteRecipes.length / itemsPerPage);
+    const totalPages = Math.ceil(favoriteRecipes.length / ITEMS_PER_PAGE);
 
     // Navigate back if items are removed and the current page no longer exists
     useEffect(() => {
@@ -23,8 +23,8 @@ const Favorites = () => {
     }, [favoriteRecipes.length, totalPages, currentPage]);
 
     const currentRecipes = favoriteRecipes.slice(
-        (currentPage - 1) * itemsPerPage,
-        currentPage * itemsPerPage
+        (currentPage - 1) * ITEMS_PER_PAGE,
+        currentPage * ITEMS_PER_PAGE
     );
 
     const handlePageChange = (page) => {
@@ -57,7 +57,7 @@ const Favorites = () => {
                 </div>
 
                 <div className="relative z-10 max-w-7xl mx-auto flex justify-end">
-                    {favoriteRecipes.length > itemsPerPage && (
+                    {favoriteRecipes.length > ITEMS_PER_PAGE && (
                         <div className="flex justify-end mt-12 animate-in fade-in slide-in-from-bottom-8 duration-1000">
                             <Pagination
                                 currentPage={currentPage}

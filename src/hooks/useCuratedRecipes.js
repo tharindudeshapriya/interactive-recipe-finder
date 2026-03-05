@@ -28,25 +28,31 @@ const useCuratedRecipes = (allIngredients) => {
     useEffect(() => {
         if (isMounted.current) return;
 
+        const controller = new AbortController();
+        const { signal } = controller;
+
         const fetchCuratedContent = async () => {
             try {
-                const seafood = await searchRecipesByCategory('Seafood');
+                const seafood = await searchRecipesByCategory('Seafood', signal);
                 setSeafoodRecipes(seafood.slice(0, 6));
 
-                const desserts = await searchRecipesByCategory('Dessert');
+                const desserts = await searchRecipesByCategory('Dessert', signal);
                 setDessertRecipes(desserts.slice(0, 6));
 
-                const vegetarian = await searchRecipesByCategory('Vegetarian');
+                const vegetarian = await searchRecipesByCategory('Vegetarian', signal);
                 setVegetarianRecipes(vegetarian.slice(0, 6));
 
                 await refreshRecipeOfTheDay();
             } catch (err) {
+                if (err.name === 'AbortError') return; // Component unmounted — ignore
                 console.error('Failed to load curated content', err);
             }
         };
 
         fetchCuratedContent();
         isMounted.current = true;
+
+        return () => controller.abort();
     }, [refreshRecipeOfTheDay]);
 
     useEffect(() => {

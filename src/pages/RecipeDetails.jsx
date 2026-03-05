@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleFavorite, selectIsFavorite } from '../store/favoritesSlice';
 import { getRecipeDetailsById } from '../services/recipeApi';
+import { getIngredients } from '../utils/recipeUtils';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import RecipeHeader from '../components/recipe/RecipeHeader';
 import RecipeIngredients from '../components/recipe/RecipeIngredients';
@@ -35,35 +36,30 @@ const RecipeDetails = () => {
     };
 
     useEffect(() => {
+        const controller = new AbortController();
         window.scrollTo(0, 0);
+
         const fetchRecipe = async () => {
             try {
-                const data = await getRecipeDetailsById(id);
+                const data = await getRecipeDetailsById(id, controller.signal);
                 if (data) {
                     setRecipe(data);
                 } else {
                     setError('Recipe not found.');
                 }
             } catch (err) {
+                if (err.name === 'AbortError') return; // Navigated away — ignore
                 setError('Failed to load recipe details.');
             } finally {
                 setLoading(false);
             }
         };
+
         fetchRecipe();
+        return () => controller.abort();
     }, [id]);
 
-    const getIngredients = () => {
-        const ingredients = [];
-        for (let i = 1; i <= 20; i++) {
-            const ingredient = recipe[`strIngredient${i}`];
-            const measure = recipe[`strMeasure${i}`];
-            if (ingredient && ingredient.trim() !== '') {
-                ingredients.push({ ingredient, measure });
-            }
-        }
-        return ingredients;
-    };
+
 
     if (loading) return <LoadingSpinner />;
 
@@ -81,7 +77,7 @@ const RecipeDetails = () => {
         );
     }
 
-    const ingredients = getIngredients();
+    const ingredients = getIngredients(recipe);
 
     return (
         <article className="max-w-7xl mx-auto w-full pt-8 pb-24 px-6">

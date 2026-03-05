@@ -18,19 +18,23 @@ const IngredientDetails = () => {
 
     // Fetch recipes associated with the ingredient
     useEffect(() => {
+        const controller = new AbortController();
+
         const fetchRecipes = async () => {
             setLoadingRecipes(true);
             try {
-                const results = await searchRecipesByIngredient(name);
+                const results = await searchRecipesByIngredient(name, controller.signal);
                 setRecipes(results || []);
             } catch (err) {
-                console.error("Failed to fetch recipes for ingredient", err);
+                if (err.name === 'AbortError') return; // Navigated away — ignore
+                console.error('Failed to fetch recipes for ingredient', err);
             } finally {
                 setLoadingRecipes(false);
             }
         };
 
         fetchRecipes();
+        return () => controller.abort();
     }, [name]);
 
     // Resolve ingredient details from global store
