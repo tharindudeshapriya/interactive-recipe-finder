@@ -35,7 +35,7 @@ const HomeHeroSection = ({
             />
 
             {/* Gradient Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-b from-bg-base/30 via-bg-base/70 to-bg-base" />
+            <div className="absolute inset-0 bg-gradient-to-b from-bg-base/10 via-bg-base/40 to-bg-base/80" /><div className="absolute inset-0 bg-gradient-to-b from-bg-base/30 via-bg-base/70 to-bg-base" />
 
             {/* Content */}
             <div className="relative z-[70] w-full h-full flex flex-col items-center justify-center pt-8">

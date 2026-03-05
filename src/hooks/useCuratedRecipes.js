@@ -1,13 +1,13 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
-import { searchRecipesByCategory, getRandomRecipe } from '../services/recipeApi';
+import { useState, useEffect, useCallback } from 'react';
+import { getRandomRecipe } from '../services/recipeApi';
 
 const useCuratedRecipes = (allIngredients) => {
+    const [recipeOfTheDay, setRecipeOfTheDay] = useState(null);
     const [seafoodRecipes, setSeafoodRecipes] = useState([]);
     const [dessertRecipes, setDessertRecipes] = useState([]);
     const [vegetarianRecipes, setVegetarianRecipes] = useState([]);
-    const [recipeOfTheDay, setRecipeOfTheDay] = useState(null);
     const [dailyIngredients, setDailyIngredients] = useState([]);
-    const isMounted = useRef(false);
+    const [loading, setLoading] = useState(true);
 
     const refreshIngredients = useCallback(() => {
         if (allIngredients.length > 0) {
@@ -21,55 +21,66 @@ const useCuratedRecipes = (allIngredients) => {
             const recipe = await getRandomRecipe();
             setRecipeOfTheDay(recipe);
         } catch (err) {
-            console.error("Failed to fetch recipe of the day", err);
+            console.error('Failed to fetch recipe of the day', err);
         }
     }, []);
 
+    // Fetch all curated content on mount
     useEffect(() => {
-        if (isMounted.current) return;
-
         const controller = new AbortController();
         const { signal } = controller;
+        let cancelled = false;
 
-        const fetchCuratedContent = async () => {
+        const fetchAll = async () => {
+            setLoading(true);
             try {
-                const seafood = await searchRecipesByCategory('Seafood', signal);
-                setSeafoodRecipes(seafood.slice(0, 6));
+                // Run fetches in parallel for speed
+                const [seafood, desserts, vegetarian, dailyRecipe] = await Promise.all([
+                    import('../services/recipeApi').then(m => m.searchRecipesByCategory('Seafood', signal)),
+                    import('../services/recipeApi').then(m => m.searchRecipesByCategory('Dessert', signal)),
+                    import('../services/recipeApi').then(m => m.searchRecipesByCategory('Vegetarian', signal)),
+                    getRandomRecipe(signal)
+                ]);
 
-                const desserts = await searchRecipesByCategory('Dessert', signal);
-                setDessertRecipes(desserts.slice(0, 6));
-
-                const vegetarian = await searchRecipesByCategory('Vegetarian', signal);
-                setVegetarianRecipes(vegetarian.slice(0, 6));
-
-                await refreshRecipeOfTheDay();
+                if (!cancelled) {
+                    setSeafoodRecipes(seafood.slice(0, 6));
+                    setDessertRecipes(desserts.slice(0, 6));
+                    setVegetarianRecipes(vegetarian.slice(0, 6));
+                    setRecipeOfTheDay(dailyRecipe);
+                }
             } catch (err) {
-                if (err.name === 'AbortError') return; // Component unmounted — ignore
-                console.error('Failed to load curated content', err);
+                if (err.name !== 'AbortError') {
+                    console.error('Failed to load curated content', err);
+                }
+            } finally {
+                if (!cancelled) setLoading(false);
             }
         };
 
-        fetchCuratedContent();
-        isMounted.current = true;
+        fetchAll();
 
-        return () => controller.abort();
-    }, [refreshRecipeOfTheDay]);
+        return () => {
+            cancelled = true;
+            controller.abort();
+        };
+    }, []);
 
+    // Populate daily ingredients once the lookup data arrives
     useEffect(() => {
         if (dailyIngredients.length === 0 && allIngredients.length > 0) {
-            // eslint-disable-next-line react-hooks/set-state-in-effect
             refreshIngredients();
         }
     }, [allIngredients, dailyIngredients.length, refreshIngredients]);
 
     return {
+        recipeOfTheDay,
+        refreshRecipeOfTheDay,
         seafoodRecipes,
         dessertRecipes,
         vegetarianRecipes,
-        recipeOfTheDay,
-        refreshRecipeOfTheDay,
         dailyIngredients,
-        refreshIngredients
+        refreshIngredients,
+        loading,
     };
 };
 
