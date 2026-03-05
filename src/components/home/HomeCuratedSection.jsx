@@ -1,8 +1,8 @@
 import React from 'react';
-import RecipeFeatureCard from './RecipeFeatureCard';
-import CategoryCarousel from './CategoryCarousel';
-import CarouselContainer from './CarouselContainer';
-import IngredientFeatureCard from './IngredientFeatureCard';
+import RecipeFeatureCard from '../recipe/RecipeFeatureCard';
+import CategoryCarousel from '../category/CategoryCarousel';
+import CarouselContainer from '../common/CarouselContainer';
+import IngredientFeatureCard from '../ingredient/IngredientFeatureCard';
 
 const HomeCuratedSection = ({
     recipeOfTheDay,

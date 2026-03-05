@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { searchRecipesByCategory } from '../services/recipeApi';
-import RecipeCard from '../components/RecipeCard';
-import LoadingSpinner from '../components/LoadingSpinner';
-import Pagination from '../components/Pagination';
+import RecipeCard from '../components/recipe/RecipeCard';
+import LoadingSpinner from '../components/common/LoadingSpinner';
+import Pagination from '../components/common/Pagination';
 
 const CategoryDetails = () => {
     const { categoryName } = useParams();

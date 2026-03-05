@@ -5,7 +5,7 @@ const CarouselContainer = ({
     title,
     description,
     onRefresh,
-    refreshText = "Refresh",
+    refreshText = 'Refresh',
     autoScroll = true,
     interval = 5000,
     showArrows = true
@@ -22,10 +22,7 @@ const CarouselContainer = ({
             if (scrollRef.current) {
                 const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
                 const maxScroll = scrollWidth - clientWidth;
-
                 if (maxScroll <= 0) return;
-
-                // Scroll back to start if near the end (40px buffer)
                 if (scrollLeft >= maxScroll - 40) {
                     scrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
                 } else {
@@ -48,8 +45,8 @@ const CarouselContainer = ({
 
     const scroll = (direction) => {
         if (scrollRef.current) {
-            const scrollAmount = direction === 'left' ? -scrollRef.current.clientWidth * 0.8 : scrollRef.current.clientWidth * 0.8;
-            scrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+            const amount = direction === 'left' ? -scrollRef.current.clientWidth * 0.8 : scrollRef.current.clientWidth * 0.8;
+            scrollRef.current.scrollBy({ left: amount, behavior: 'smooth' });
         }
     };
 
@@ -64,7 +61,6 @@ const CarouselContainer = ({
                     {title && <h2 className="text-3xl md:text-4xl font-serif text-text-base mb-2">{title}</h2>}
                     {description && <p className="text-neutral-dark font-light italic">{description}</p>}
                 </div>
-
                 <div className="flex items-center gap-4">
                     {onRefresh && (
                         <button
@@ -81,46 +77,26 @@ const CarouselContainer = ({
             <div className="relative group/carousel">
                 {showArrows && (
                     <>
-                        {/* Left edge zone — always-visible gradient, arrow fades in/out */}
-                        <div
-                            className="absolute -left-6 top-0 bottom-0 w-16 md:w-20 z-10
-                                flex items-center justify-start pl-2 md:pl-3
-                                bg-gradient-to-r from-bg-base/70 to-transparent
-                                pointer-events-none"
-                        >
+                        <div className="absolute -left-6 top-0 bottom-0 w-16 md:w-20 z-10 flex items-center justify-start pl-2 md:pl-3 bg-gradient-to-r from-bg-base/70 to-transparent pointer-events-none">
                             <button
                                 onClick={() => scroll('left')}
                                 aria-label="Scroll Left"
-                                className={`pointer-events-auto flex items-center justify-center w-8 h-8 md:w-10 md:h-10 rounded-full bg-bg-surface/90 border border-neutral-light/20 shadow-lg text-text-base backdrop-blur-sm transition-all duration-300
-                                    md:opacity-0 md:group-hover/carousel:opacity-100
-                                    ${showLeftArrow ? 'opacity-100 md:opacity-0 scale-100' : 'opacity-0 scale-75 pointer-events-none'}
-                                `}
+                                className={`pointer-events-auto flex items-center justify-center w-8 h-8 md:w-10 md:h-10 rounded-full bg-bg-surface/90 border border-neutral-light/20 shadow-lg text-text-base backdrop-blur-sm transition-all duration-300 md:opacity-0 md:group-hover/carousel:opacity-100 ${showLeftArrow ? 'opacity-100 md:opacity-0 scale-100' : 'opacity-0 scale-75 pointer-events-none'}`}
                             >
                                 <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" /></svg>
                             </button>
                         </div>
-
-                        {/* Right edge zone — always-visible gradient, arrow fades in/out */}
-                        <div
-                            className="absolute -right-6 top-0 bottom-0 w-16 md:w-20 z-10
-                                flex items-center justify-end pr-2 md:pr-3
-                                bg-gradient-to-l from-bg-base/70 to-transparent
-                                pointer-events-none"
-                        >
+                        <div className="absolute -right-6 top-0 bottom-0 w-16 md:w-20 z-10 flex items-center justify-end pr-2 md:pr-3 bg-gradient-to-l from-bg-base/70 to-transparent pointer-events-none">
                             <button
                                 onClick={() => scroll('right')}
                                 aria-label="Scroll Right"
-                                className={`pointer-events-auto flex items-center justify-center w-8 h-8 md:w-10 md:h-10 rounded-full bg-bg-surface/90 border border-neutral-light/20 shadow-lg text-text-base backdrop-blur-sm transition-all duration-300
-                                    md:opacity-0 md:group-hover/carousel:opacity-100
-                                    ${showRightArrow ? 'opacity-100 md:opacity-0 scale-100' : 'opacity-0 scale-75 pointer-events-none'}
-                                `}
+                                className={`pointer-events-auto flex items-center justify-center w-8 h-8 md:w-10 md:h-10 rounded-full bg-bg-surface/90 border border-neutral-light/20 shadow-lg text-text-base backdrop-blur-sm transition-all duration-300 md:opacity-0 md:group-hover/carousel:opacity-100 ${showRightArrow ? 'opacity-100 md:opacity-0 scale-100' : 'opacity-0 scale-75 pointer-events-none'}`}
                             >
                                 <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" /></svg>
                             </button>
                         </div>
                     </>
                 )}
-
                 <div
                     ref={scrollRef}
                     onScroll={handleScroll}

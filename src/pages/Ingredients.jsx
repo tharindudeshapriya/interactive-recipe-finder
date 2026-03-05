@@ -1,19 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import SearchBar from '../components/SearchBar';
-import IngredientCard from '../components/IngredientCard';
-import LoadingSpinner from '../components/LoadingSpinner';
-import Pagination from '../components/Pagination';
-import useRandomBackground from '../hooks/useRandomBackground';
+import { ITEMS_PER_PAGE } from '../constants';
+import SearchBar from '../components/common/SearchBar';
+import IngredientCard from '../components/ingredient/IngredientCard';
+import LoadingSpinner from '../components/common/LoadingSpinner';
+import Pagination from '../components/common/Pagination';
+import PageHero from '../components/common/PageHero';
 
 const Ingredients = () => {
     const { allIngredients } = useSelector((state) => state.search);
     const [searchTerm, setSearchTerm] = useState('');
     const [filteredIngredients, setFilteredIngredients] = useState([]);
-    const bgImage = useRandomBackground();
-
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 15;
 
     useEffect(() => {
         if (allIngredients) {
@@ -21,42 +19,29 @@ const Ingredients = () => {
                 ing.strIngredient.toLowerCase().includes(searchTerm.toLowerCase())
             );
             setFilteredIngredients(filtered);
-            setCurrentPage(1); // Reset page when search term changes
+            setCurrentPage(1);
         }
     }, [searchTerm, allIngredients]);
 
-    const totalPages = Math.ceil(filteredIngredients.length / itemsPerPage);
+    const totalPages = Math.ceil(filteredIngredients.length / ITEMS_PER_PAGE);
     const currentIngredients = filteredIngredients.slice(
-        (currentPage - 1) * itemsPerPage,
-        currentPage * itemsPerPage
+        (currentPage - 1) * ITEMS_PER_PAGE,
+        currentPage * ITEMS_PER_PAGE
     );
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
-        // Scroll just past the hero image to the start of the list
         window.scrollTo({ top: window.innerWidth < 768 ? 400 : 500, behavior: 'smooth' });
     };
 
     return (
         <div className="min-h-screen">
-            {/* Header */}
-            <header className="relative overflow-hidden pt-32 pb-24 text-center mb-12 px-4 shadow-sm">
-                <div
-                    className="absolute inset-0 bg-cover bg-center animate-slow-pan opacity-60"
-                    style={{ backgroundImage: `url('${bgImage}')` }}
-                ></div>
-                <div className="absolute inset-0 bg-gradient-to-b from-bg-base/30 via-bg-base/70 to-bg-base"></div>
-
-                <div className="relative z-10 max-w-4xl mx-auto flex flex-col items-center">
-                    <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-primary bg-bg-base/80 px-4 py-2 rounded-full inline-block backdrop-blur-sm mb-6 animate-in fade-in slide-in-from-bottom-2 duration-700">The Library</span>
-                    <h1 className="text-5xl md:text-7xl font-serif text-text-base mb-8 leading-tight animate-in fade-in slide-in-from-bottom-4 duration-1000">
-                        Know Your <br /> <span className="italic font-light">Ingredients</span>
-                    </h1>
-                    <p className="text-lg md:text-xl text-text-base font-light italic mb-12 animate-in fade-in slide-in-from-bottom-6 duration-1000">
-                        Explore our comprehensive collection of culinary essentials.
-                    </p>
-                </div>
-            </header>
+            <PageHero
+                badge="The Library"
+                title="Know Your"
+                titleItalic="Ingredients"
+                subtitle="Explore our comprehensive collection of culinary essentials."
+            />
 
             {/* Controls */}
             <div className="max-w-7xl mx-auto px-6 mb-8 flex flex-col items-center">
@@ -70,7 +55,7 @@ const Ingredients = () => {
                 </div>
 
                 <div className="w-full flex justify-end animate-in fade-in slide-in-from-bottom-8 duration-1000">
-                    {filteredIngredients.length > itemsPerPage && (
+                    {filteredIngredients.length > ITEMS_PER_PAGE && (
                         <Pagination
                             currentPage={currentPage}
                             totalPages={totalPages}

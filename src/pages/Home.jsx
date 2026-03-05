@@ -7,10 +7,10 @@ import useCuratedRecipes from '../hooks/useCuratedRecipes';
 import useRecipeSearch from '../hooks/useRecipeSearch';
 
 // Components
-import HomeHeroSection from '../components/HomeHeroSection';
-import HomeCuratedSection from '../components/HomeCuratedSection';
-import HomeArchiveSection from '../components/HomeArchiveSection';
-import HomeSearchResults from '../components/HomeSearchResults';
+import HomeHeroSection from '../components/home/HomeHeroSection';
+import HomeCuratedSection from '../components/home/HomeCuratedSection';
+import HomeArchiveSection from '../components/home/HomeArchiveSection';
+import HomeSearchResults from '../components/home/HomeSearchResults';
 
 const Home = () => {
     const dispatch = useDispatch();
@@ -57,16 +57,16 @@ const Home = () => {
             <HomeHeroSection
                 isShowingInspiration={isShowingInspiration}
                 searchType={searchType}
-                setSearchType={(type) => dispatch(setSearchType(type))}
+                onSearchTypeChange={(type) => dispatch(setSearchType(type))}
                 searchTerm={searchTerm}
-                setSearchTerm={(term) => dispatch(setSearchTerm(term))}
-                handleSearch={handleSearch}
+                onSearchTermChange={(term) => dispatch(setSearchTerm(term))}
+                onSearch={() => handleSearch(searchTerm)}
                 allIngredients={allIngredients}
                 allAreas={allAreas}
-                handleAreaChange={handleAreaChange}
+                onAreaChange={handleAreaChange}
                 allCategories={allCategories}
-                handleCategoryClick={handleCategoryClick}
-                handleSuggestionClick={handleSuggestionClick}
+                onCategoryClick={handleCategoryClick}
+                onSuggestionClick={handleSuggestionClick}
             />
 
             {isShowingInspiration && (

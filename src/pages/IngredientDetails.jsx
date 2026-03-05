@@ -3,8 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { searchRecipesByIngredient } from '../services/recipeApi';
 import { setSearchTerm, setSearchType, setSearchResults } from '../store/searchSlice';
-import CategoryCarousel from '../components/CategoryCarousel';
-import LoadingSpinner from '../components/LoadingSpinner';
+import CategoryCarousel from '../components/category/CategoryCarousel';
+import LoadingSpinner from '../components/common/LoadingSpinner';
 
 const IngredientDetails = () => {
     const { name } = useParams();

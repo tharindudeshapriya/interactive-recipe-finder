@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import RecipeCard from '../components/RecipeCard';
-import Pagination from '../components/Pagination';
+import RecipeCard from '../components/recipe/RecipeCard';
+import Pagination from '../components/common/Pagination';
 import useRandomBackground from '../hooks/useRandomBackground';
 
 const Favorites = () => {

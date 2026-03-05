@@ -4,10 +4,10 @@ const SearchBar = ({
     value,
     onChange,
     onSubmit,
-    placeholder = "Search...",
-    buttonText = "Search",
+    placeholder = 'Search...',
+    buttonText = 'Search',
     onFocus,
-    children // For autocomplete dropdowns
+    children
 }) => {
     return (
         <div className="flex-grow w-full relative">
@@ -31,7 +31,6 @@ const SearchBar = ({
                     className="shrink-0 py-2.5 md:py-4 px-3 md:px-10 text-text-base hover:bg-neutral-light/5 transition-colors border-l border-neutral-light/20 bg-neutral-light/5 flex items-center justify-center"
                     aria-label={buttonText}
                 >
-                    {/* Icon on mobile, text on desktop */}
                     <svg className="w-4 h-4 md:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
                     </svg>

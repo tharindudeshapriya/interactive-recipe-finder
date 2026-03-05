@@ -19,9 +19,7 @@ const IngredientCard = ({ ingredient }) => {
                 </div>
 
                 <div className="flex flex-col flex-grow items-center">
-                    <span className="text-[9px] font-bold uppercase tracking-[0.25em] text-primary mb-2">
-                        Pantry Item
-                    </span>
+                    <span className="text-[9px] font-bold uppercase tracking-[0.25em] text-primary mb-2">Pantry Item</span>
                     <h3 className="text-lg font-serif text-text-base leading-snug group-hover:text-primary transition-colors mb-3">
                         {ingredient.strIngredient}
                     </h3>
