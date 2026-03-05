@@ -5,6 +5,7 @@ import {
     searchRecipesByIngredient,
     searchRecipesByArea,
     searchRecipesByCategory,
+    getRecipeDetailsById,
     getRandomRecipe
 } from '../services/recipeApi';
 import {
@@ -44,7 +45,15 @@ const useRecipeSearch = () => {
         try {
             let results;
             if (searchType === 'ingredient') {
-                results = await searchRecipesByIngredient(term);
+                // Ingredient search returns minimal data (no strCategory/strArea).
+                // Enrich each result with full details so filters can populate.
+                const partialResults = await searchRecipesByIngredient(term);
+                const detailPromises = partialResults.map((r) =>
+                    getRecipeDetailsById(r.idMeal).catch(() => r)
+                );
+                results = await Promise.all(detailPromises);
+                // Fall back to partial data if lookup returned null
+                results = results.map((full, i) => full || partialResults[i]);
             } else {
                 results = await searchRecipesByName(term);
             }
