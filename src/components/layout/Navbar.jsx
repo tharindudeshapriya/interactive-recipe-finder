@@ -10,6 +10,64 @@ const Navbar = () => {
     const { items } = useSelector(state => state.favorites);
     const favoritesCount = items.length;
 
+    // Theme state
+    const [isDarkMode, setIsDarkMode] = useState(() => {
+        if (typeof window !== 'undefined') {
+            if ('theme' in localStorage) return localStorage.getItem('theme') === 'dark';
+            return window.matchMedia('(prefers-color-scheme: dark)').matches;
+        }
+        return false;
+    });
+
+    useEffect(() => {
+        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+        const handleChange = (e) => {
+            if (!('theme' in localStorage)) {
+                setIsDarkMode(e.matches);
+            }
+        };
+
+        // Add listener
+        if (mediaQuery?.addEventListener) {
+            mediaQuery.addEventListener('change', handleChange);
+        } else {
+            mediaQuery.addListener(handleChange); // Fallback for older browsers
+        }
+
+        return () => {
+            if (mediaQuery?.removeEventListener) {
+                mediaQuery.removeEventListener('change', handleChange);
+            } else {
+                mediaQuery.removeListener(handleChange);
+            }
+        };
+    }, []);
+
+    useEffect(() => {
+        if (isDarkMode) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    }, [isDarkMode]);
+
+    const toggleTheme = () => {
+        setIsDarkMode(prev => {
+            const nextMode = !prev;
+            const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+            // If user's toggle matches the system default, remove from localStorage
+            // so that we can resume tracking system default automatically!
+            if (nextMode === systemTheme) {
+                localStorage.removeItem('theme');
+            } else {
+                localStorage.setItem('theme', nextMode ? 'dark' : 'light');
+            }
+
+            return nextMode;
+        });
+    };
+
     const handleGoHome = () => {
         dispatch(clearSearch());
         setIsOpen(false);
@@ -58,10 +116,40 @@ const Navbar = () => {
                             )}
                         </span>
                     </Link>
+                    <button
+                        onClick={toggleTheme}
+                        className="text-text-base hover:text-primary transition-colors focus:outline-none ml-2"
+                        aria-label="Toggle Theme"
+                    >
+                        {isDarkMode ? (
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                            </svg>
+                        ) : (
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                            </svg>
+                        )}
+                    </button>
                 </div>
 
                 {/* Mobile Icons & Hamburger */}
                 <div className="md:hidden flex items-center gap-1 relative z-50">
+                    <button
+                        onClick={toggleTheme}
+                        className="p-2 text-text-base focus:outline-none mr-1"
+                        aria-label="Toggle Theme"
+                    >
+                        {isDarkMode ? (
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                            </svg>
+                        ) : (
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                            </svg>
+                        )}
+                    </button>
                     <Link
                         to="/favorites"
                         onClick={() => setIsOpen(false)}

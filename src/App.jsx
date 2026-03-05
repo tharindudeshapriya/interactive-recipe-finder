@@ -16,7 +16,7 @@ function App() {
 
   return (
     <Router>
-      <div className="min-h-screen flex flex-col bg-secondary/10 text-text-base font-sans">
+      <div className="min-h-screen flex flex-col bg-bg-base text-text-base font-sans transition-colors duration-300">
         <Navbar />
 
         <main className="flex-grow w-full">
