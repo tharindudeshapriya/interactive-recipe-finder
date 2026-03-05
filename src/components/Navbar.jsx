@@ -28,7 +28,7 @@ const Navbar = () => {
     }, [isOpen]);
 
     return (
-        <nav className="bg-bg-surface border-b border-text-base/10 sticky top-0 z-50">
+        <nav className="bg-bg-surface border-b border-text-base/10 sticky top-0 z-[100]">
             <div className="max-w-7xl mx-auto px-4 md:px-6 py-4 md:py-5 flex justify-between items-center relative z-50 bg-bg-surface">
                 <Link to="/" onClick={handleGoHome} className="flex items-center text-xl md:text-2xl font-serif text-text-base tracking-tight hover:opacity-80 transition-opacity whitespace-nowrap relative z-50">
                     <svg className="w-5 h-5 md:w-6 md:h-6 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -56,22 +56,40 @@ const Navbar = () => {
                     </Link>
                 </div>
 
-                {/* Mobile Hamburger Button */}
-                <button
-                    onClick={() => setIsOpen(!isOpen)}
-                    className="md:hidden text-text-base p-2 focus:outline-none relative z-50"
-                    aria-label="Toggle Navigation"
-                >
-                    <div className="w-6 h-5 flex flex-col justify-between relative">
-                        <span className={`w-full h-[2px] bg-current transition-all duration-300 origin-left ${isOpen ? 'rotate-45 translate-x-1 -translate-y-[1px]' : ''}`} />
-                        <span className={`w-full h-[2px] bg-current transition-opacity duration-300 ${isOpen ? 'opacity-0' : ''}`} />
-                        <span className={`w-full h-[2px] bg-current transition-all duration-300 origin-left ${isOpen ? '-rotate-45 translate-x-1 translate-y-[1px]' : ''}`} />
-                    </div>
-                </button>
+                {/* Mobile Icons & Hamburger */}
+                <div className="md:hidden flex items-center gap-1 relative z-50">
+                    <Link
+                        to="/favorites"
+                        onClick={() => setIsOpen(false)}
+                        className={`p-2 relative ${location.pathname === '/favorites' ? 'text-primary' : 'text-text-base'}`}
+                        aria-label="Favorites"
+                    >
+                        <svg className="w-6 h-6" fill={items.length > 0 ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                        </svg>
+                        {favoritesCount > 0 && (
+                            <span className="absolute top-1 right-1 bg-primary text-white text-[8px] w-4 h-4 flex items-center justify-center rounded-full border-2 border-bg-surface font-sans font-bold">
+                                {favoritesCount}
+                            </span>
+                        )}
+                    </Link>
+
+                    <button
+                        onClick={() => setIsOpen(!isOpen)}
+                        className="text-text-base p-2 focus:outline-none"
+                        aria-label="Toggle Navigation"
+                    >
+                        <div className="w-6 h-5 flex flex-col justify-between relative">
+                            <span className={`w-full h-[2px] bg-current transition-all duration-300 origin-left ${isOpen ? 'rotate-45 translate-x-1 -translate-y-[1px]' : ''}`} />
+                            <span className={`w-full h-[2px] bg-current transition-opacity duration-300 ${isOpen ? 'opacity-0' : ''}`} />
+                            <span className={`w-full h-[2px] bg-current transition-all duration-300 origin-left ${isOpen ? '-rotate-45 translate-x-1 translate-y-[1px]' : ''}`} />
+                        </div>
+                    </button>
+                </div>
             </div>
 
             {/* Mobile Navigation Overlay */}
-            <div className={`md:hidden fixed inset-0 z-40 bg-bg-surface transition-transform duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] flex flex-col items-center justify-center space-y-12 ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+            <div className={`md:hidden fixed inset-0 z-[110] bg-bg-surface transition-transform duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] flex flex-col items-center justify-center space-y-12 ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
                 <Link to="/" onClick={handleGoHome} className={`text-4xl font-serif tracking-tight ${location.pathname === '/' ? 'text-primary' : 'text-text-base'}`}>HOME</Link>
                 <Link to="/categories" onClick={() => setIsOpen(false)} className={`text-4xl font-serif tracking-tight ${location.pathname.startsWith('/categories') ? 'text-primary' : 'text-text-base'}`}>CATEGORIES</Link>
                 <Link to="/ingredients" onClick={() => setIsOpen(false)} className={`text-4xl font-serif tracking-tight ${location.pathname.startsWith('/ingredient') ? 'text-primary' : 'text-text-base'}`}>INGREDIENTS</Link>

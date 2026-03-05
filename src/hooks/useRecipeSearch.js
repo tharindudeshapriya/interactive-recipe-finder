@@ -62,7 +62,8 @@ const useRecipeSearch = () => {
         if (!area) return;
         setLoading(true);
         setError(null);
-        dispatch(setSearchTerm(''));
+        dispatch(setSearchTerm(area));
+        dispatch(setSearchType('name'));
         try {
             const results = await searchRecipesByArea(area);
             dispatch(setSearchResults(results));

@@ -52,7 +52,11 @@ const CategoryDetails = () => {
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        const target = document.getElementById('category-results-top');
+        if (target) {
+            const offset = target.offsetTop - 100;
+            window.scrollTo({ top: offset, behavior: 'smooth' });
+        }
     };
 
     const isGlobalDataReady = lookupStatus === 'succeeded' || lookupStatus === 'failed' || allCategories.length > 0;
@@ -119,7 +123,7 @@ const CategoryDetails = () => {
             </header>
 
             {/* Recipes Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-12 md:gap-y-16 animate-in fade-in slide-in-from-bottom-8 duration-1000">
+            <div id="category-results-top" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-12 md:gap-y-16 animate-in fade-in slide-in-from-bottom-8 duration-1000">
                 {currentRecipes.map((recipe) => (
                     <RecipeCard key={recipe.idMeal} recipe={recipe} />
                 ))}

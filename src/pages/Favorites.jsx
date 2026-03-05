@@ -29,7 +29,11 @@ const Favorites = () => {
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
-        window.scrollTo({ top: window.innerWidth < 768 ? 400 : 500, behavior: 'smooth' });
+        const target = document.getElementById('collection-top');
+        if (target) {
+            const offset = target.offsetTop - 100;
+            window.scrollTo({ top: offset, behavior: 'smooth' });
+        }
     };
 
     return (
@@ -84,7 +88,7 @@ const Favorites = () => {
                     </div>
                 ) : (
                     <>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-16">
+                        <div className="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-x-4 md:gap-x-8 gap-y-8 md:gap-y-12">
                             {currentRecipes.map((recipe) => (
                                 <RecipeCard key={recipe.idMeal} recipe={recipe} />
                             ))}

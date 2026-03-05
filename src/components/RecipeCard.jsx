@@ -28,7 +28,7 @@ const RecipeCard = ({ recipe }) => {
     return (
         <article className={`group h-full bg-bg-surface border border-neutral-light/30 rounded-2xl overflow-hidden transition-all duration-500 hover:shadow-2xl hover:border-primary/50 ${!isRemoving ? 'hover:-translate-y-2' : ''} ${isRemoving && isFavoritesPage ? 'opacity-0 scale-90 translate-y-8 cursor-default pointer-events-none' : 'opacity-100 scale-100'}`}>
             <Link to={`/recipe/${recipe.idMeal}`} className="flex flex-col h-full">
-                <figure className="relative aspect-[4/5] overflow-hidden bg-neutral-light/5">
+                <figure className="relative aspect-[3/2] overflow-hidden bg-neutral-light/5">
                     <img
                         src={recipe.strMealThumb}
                         alt={recipe.strMeal}
@@ -55,11 +55,11 @@ const RecipeCard = ({ recipe }) => {
                     </button>
                 </figure>
 
-                <div className="p-5 flex flex-col flex-grow text-center">
+                <div className="p-4 flex flex-col flex-grow text-center">
                     <span className="text-[9px] font-bold uppercase tracking-[0.25em] text-primary mb-2">
                         {recipe.strCategory || 'Recipe'}
                     </span>
-                    <h3 className="text-lg md:text-xl font-serif text-text-base leading-snug group-hover:text-primary transition-colors line-clamp-2">
+                    <h3 className="text-base font-serif text-text-base leading-snug group-hover:text-primary transition-colors line-clamp-2">
                         {recipe.strMeal}
                     </h3>
                 </div>

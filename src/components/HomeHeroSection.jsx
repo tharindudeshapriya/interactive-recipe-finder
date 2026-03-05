@@ -60,11 +60,11 @@ const HomeHeroSection = ({
     };
 
     return (
-        <section className={`relative overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] ${isShowingInspiration ? 'py-12 md:py-32' : 'py-6 md:py-16'}`}>
+        <section className={`relative transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] ${isShowingInspiration ? 'py-12 md:py-32' : 'py-6 md:py-16'}`}>
 
             {/* Animated Background */}
             <div
-                className="absolute inset-0 bg-cover bg-center animate-slow-pan opacity-60"
+                className="absolute inset-0 bg-cover bg-center animate-slow-pan opacity-60 overflow-hidden"
                 style={{ backgroundImage: `url('${bgImage}')` }}
             ></div>
 
@@ -72,7 +72,7 @@ const HomeHeroSection = ({
             <div className="absolute inset-0 bg-gradient-to-b from-bg-base/30 via-bg-base/70 to-bg-base"></div>
 
             {/* Content Container */}
-            <div className="relative z-10 w-full h-full flex flex-col items-center justify-center pt-8">
+            <div className="relative z-[70] w-full h-full flex flex-col items-center justify-center pt-8">
                 <div className="px-6 text-center max-w-4xl mx-auto w-full">
                     <div className="flex items-center justify-center gap-4 mb-4 md:mb-6">
                         <svg className={`text-primary transition-all duration-700 ${isShowingInspiration ? 'w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16' : 'w-8 h-8 md:w-10 md:h-10'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -155,8 +155,8 @@ const HomeHeroSection = ({
                             </button>
 
                             {/* Custom Dropdown Menu */}
-                            <div className={`absolute left-0 right-0 mt-2 bg-bg-surface border border-neutral-light/30 rounded-2xl shadow-xl z-50 overflow-hidden transition-all duration-300 origin-top overflow-y-auto max-h-80 ${isAreaOpen ? 'opacity-100 scale-y-100' : 'opacity-0 scale-y-0 pointer-events-none'}`}>
-                                <div className="py-2">
+                            <div className={`absolute left-0 right-0 mt-2 bg-bg-surface border border-neutral-light/30 rounded-2xl shadow-xl z-[60] overflow-hidden transition-all duration-300 origin-top ${isAreaOpen ? 'opacity-100 scale-y-100' : 'opacity-0 scale-y-0 pointer-events-none'}`}>
+                                <div className="py-2 overflow-y-auto max-h-[240px] scrollbar-thin scrollbar-thumb-neutral-light/30">
                                     <button
                                         onClick={() => {
                                             handleAreaChange('');

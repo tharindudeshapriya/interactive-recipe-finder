@@ -97,6 +97,7 @@ const Home = () => {
                         loading={loading}
                         error={error}
                         loadInspiration={loadInspiration}
+                        searchTerm={searchTerm}
                     />
                 )}
             </section>
