@@ -1,23 +1,22 @@
 import { useState, useEffect } from 'react';
 
-const BACKGROUND_IMAGES = [
-    '/foodiesfeed.com_cozy-dinner-table-with-delicious-meals.jpg',
-    '/foodiesfeed.com_colorful-bowl-of-deliciousness-with-fried-egg.jpg',
-    '/foodiesfeed.com_delicious-hot-pot-with-fresh-ingredients.jpg',
-    '/foodiesfeed.com_hearty-beef-stew-with-vegetables.jpg',
-    '/foodiesfeed.com_colorful-taco-platter-with-eggs-and-sides.jpg',
-    '/foodiesfeed.com_delicious-crispy-samosas-with-dipping-sauces.jpg',
-    '/foodiesfeed.com_fresh-tacos-being-assembled-in-busy-kitchen.jpg',
-    '/foodiesfeed.com_spicy-hot-pot-feast-with-beer.jpg',
-    '/foodiesfeed.com_steak-cooked-on-fire.jpg'
-];
+// Dynamically discover all images in the backgrounds folder
+// import.meta.glob is a Vite feature that lets us scan the filesystem at build time
+const BACKGROUND_IMAGES_MAP = import.meta.glob('../assets/backgrounds/*.{jpg,jpeg,png,webp,svg}', {
+    eager: true,
+    import: 'default'
+});
+
+const BACKGROUND_IMAGES = Object.values(BACKGROUND_IMAGES_MAP);
 
 const useRandomBackground = () => {
     const [bgImage, setBgImage] = useState('');
 
     useEffect(() => {
-        const randomImg = BACKGROUND_IMAGES[Math.floor(Math.random() * BACKGROUND_IMAGES.length)];
-        setBgImage(randomImg);
+        if (BACKGROUND_IMAGES.length > 0) {
+            const randomImg = BACKGROUND_IMAGES[Math.floor(Math.random() * BACKGROUND_IMAGES.length)];
+            setBgImage(randomImg);
+        }
     }, []);
 
     return bgImage;

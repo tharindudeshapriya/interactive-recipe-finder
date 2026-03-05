@@ -26,12 +26,12 @@ const CategoryPills = ({ allCategories, activeTerm, isShowingInspiration, onCate
                 </button>
             </div>
 
-            <div className={`justify-center items-center gap-2 md:gap-x-6 gap-y-4 flex flex-wrap transition-all duration-500 overflow-hidden ${showMobile ? 'max-h-[1000px] opacity-100 mt-6' : 'max-h-0 opacity-0 md:max-h-[1000px] md:opacity-100'} md:mt-0`}>
+            <div className={`justify-center items-center gap-2 md:gap-x-6 gap-y-4 flex flex-wrap transition-all duration-500 overflow-hidden pb-2 ${showMobile ? 'max-h-[1000px] opacity-100 mt-6' : 'max-h-0 opacity-0 md:max-h-[1000px] md:opacity-100'} md:mt-0`}>
                 {allCategories.map((cat) => (
                     <button
                         key={cat.idCategory}
                         onClick={() => onCategoryClick(cat.strCategory)}
-                        className={`text-[10px] md:text-sm font-medium tracking-wider uppercase transition-all px-4 py-2 md:p-0 rounded-full md:rounded-none border md:border-0 ${activeTerm === cat.strCategory && !isShowingInspiration
+                        className={`text-[10px] md:text-sm font-medium tracking-wider uppercase transition-all px-4 py-2 md:p-0 rounded-full md:rounded-none border md:border-0 z-10 hover:z-20 ${activeTerm === cat.strCategory && !isShowingInspiration
                             ? 'bg-text-base text-bg-base border-text-base md:bg-transparent md:text-text-base'
                             : 'text-text-base/70 hover:text-text-base border-neutral-light/30 hover:border-text-base md:border-transparent md:hover:border-transparent'
                             } relative md:after:content-[''] md:after:absolute md:after:-bottom-1 md:after:left-0 md:after:w-0 md:after:h-[1px] md:after:bg-text-base md:hover:after:w-full md:after:transition-all md:after:duration-300`}
