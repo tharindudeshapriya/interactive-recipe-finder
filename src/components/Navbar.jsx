@@ -90,6 +90,15 @@ const Navbar = () => {
 
             {/* Mobile Navigation Overlay */}
             <div className={`md:hidden fixed inset-0 z-[110] bg-bg-surface transition-transform duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] flex flex-col items-center justify-center space-y-12 ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+                <button
+                    onClick={() => setIsOpen(false)}
+                    className="absolute top-6 right-4 p-2 text-text-base focus:outline-none"
+                    aria-label="Close Menu"
+                >
+                    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
                 <Link to="/" onClick={handleGoHome} className={`text-4xl font-serif tracking-tight ${location.pathname === '/' ? 'text-primary' : 'text-text-base'}`}>HOME</Link>
                 <Link to="/categories" onClick={() => setIsOpen(false)} className={`text-4xl font-serif tracking-tight ${location.pathname.startsWith('/categories') ? 'text-primary' : 'text-text-base'}`}>CATEGORIES</Link>
                 <Link to="/ingredients" onClick={() => setIsOpen(false)} className={`text-4xl font-serif tracking-tight ${location.pathname.startsWith('/ingredient') ? 'text-primary' : 'text-text-base'}`}>INGREDIENTS</Link>
