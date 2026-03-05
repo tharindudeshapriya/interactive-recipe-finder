@@ -64,10 +64,10 @@ const RecipeHeader = ({ recipe, isFavorite, isRemoving, onToggleFavorite, onBack
                         </div>
                     )}
 
-                    {/* Favorite Button */}
-                    <div className="mt-4 md:mt-8">
+                    {/* Action Buttons */}
+                    <div className="mt-4 md:mt-8 flex flex-wrap gap-4 items-center">
                         <button
-                            className={`w-full sm:w-auto inline-flex items-center justify-center gap-3 px-6 md:px-8 py-3 md:py-4 border rounded-full transition-all duration-300 shadow-sm group font-bold tracking-widest text-[10px] md:text-xs uppercase ${isFavorite
+                            className={`flex-1 sm:flex-none inline-flex items-center justify-center gap-3 px-6 md:px-8 py-3 md:py-4 border rounded-full transition-all duration-300 shadow-sm group font-bold tracking-widest text-[10px] md:text-xs uppercase ${isFavorite
                                 ? 'bg-red-50 border-red-200 text-red-600 shadow-inner'
                                 : 'bg-bg-surface border-neutral-light/30 text-neutral-dark hover:text-red-500 hover:border-red-200 hover:bg-red-50'
                                 } ${isRemoving ? '!bg-neutral-light/10 !border-neutral-light/30 !text-neutral-dark opacity-70 scale-95' : ''}`}
@@ -76,7 +76,7 @@ const RecipeHeader = ({ recipe, isFavorite, isRemoving, onToggleFavorite, onBack
                             disabled={isRemoving}
                         >
                             {isRemoving ? (
-                                <svg className="w-4 h-4 md:w-5 md:h-5 text-neutral-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg className="w-4 h-4 md:w-5 md:h-5 text-neutral-dark animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m12 13-1-1 2-2-3-3 2-2" />
                                 </svg>
@@ -86,6 +86,28 @@ const RecipeHeader = ({ recipe, isFavorite, isRemoving, onToggleFavorite, onBack
                                 </svg>
                             )}
                             {isRemoving ? 'Removing...' : isFavorite ? 'Remove from Collection' : 'Add to Collection'}
+                        </button>
+
+                        <button
+                            className="flex-1 sm:flex-none inline-flex items-center justify-center gap-3 px-6 md:px-8 py-3 md:py-4 bg-bg-surface border border-neutral-light/30 rounded-full text-neutral-dark hover:text-primary hover:border-primary/30 transition-all duration-300 shadow-sm group font-bold tracking-widest text-[10px] md:text-xs uppercase"
+                            title="Copy link to recipe"
+                            onClick={(e) => {
+                                navigator.clipboard.writeText(window.location.href);
+                                const originalText = e.currentTarget.lastChild.textContent;
+                                e.currentTarget.lastChild.textContent = 'Copied!';
+                                e.currentTarget.firstChild.classList.add('text-primary');
+                                setTimeout(() => {
+                                    if (e.currentTarget) {
+                                        e.currentTarget.lastChild.textContent = originalText;
+                                        e.currentTarget.firstChild.classList.remove('text-primary');
+                                    }
+                                }, 2000);
+                            }}
+                        >
+                            <svg className="w-4 h-4 md:w-5 md:h-5 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                            </svg>
+                            <span>Share</span>
                         </button>
                     </div>
                 </div>

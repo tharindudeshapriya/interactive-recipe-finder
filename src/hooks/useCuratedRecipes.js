@@ -25,7 +25,6 @@ const useCuratedRecipes = (allIngredients) => {
         }
     }, []);
 
-    // Fetch all curated content on mount
     useEffect(() => {
         const controller = new AbortController();
         const { signal } = controller;
@@ -34,7 +33,6 @@ const useCuratedRecipes = (allIngredients) => {
         const fetchAll = async () => {
             setLoading(true);
             try {
-                // Run fetches in parallel for speed
                 const [seafood, desserts, vegetarian, dailyRecipe] = await Promise.all([
                     import('../services/recipeApi').then(m => m.searchRecipesByCategory('Seafood', signal)),
                     import('../services/recipeApi').then(m => m.searchRecipesByCategory('Dessert', signal)),
@@ -65,7 +63,6 @@ const useCuratedRecipes = (allIngredients) => {
         };
     }, []);
 
-    // Populate daily ingredients once the lookup data arrives
     useEffect(() => {
         if (dailyIngredients.length === 0 && allIngredients.length > 0) {
             refreshIngredients();

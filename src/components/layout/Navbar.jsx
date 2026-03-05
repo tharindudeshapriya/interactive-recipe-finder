@@ -10,12 +10,65 @@ const Navbar = () => {
     const { items } = useSelector(state => state.favorites);
     const favoritesCount = items.length;
 
+    const [isDarkMode, setIsDarkMode] = useState(() => {
+        if (typeof window !== 'undefined') {
+            if ('theme' in localStorage) return localStorage.getItem('theme') === 'dark';
+            return window.matchMedia('(prefers-color-scheme: dark)').matches;
+        }
+        return false;
+    });
+
+    useEffect(() => {
+        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+        const handleChange = (e) => {
+            if (!('theme' in localStorage)) {
+                setIsDarkMode(e.matches);
+            }
+        };
+
+        if (mediaQuery?.addEventListener) {
+            mediaQuery.addEventListener('change', handleChange);
+        } else {
+            mediaQuery.addListener(handleChange);
+        }
+
+        return () => {
+            if (mediaQuery?.removeEventListener) {
+                mediaQuery.removeEventListener('change', handleChange);
+            } else {
+                mediaQuery.removeListener(handleChange);
+            }
+        };
+    }, []);
+
+    useEffect(() => {
+        if (isDarkMode) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    }, [isDarkMode]);
+
+    const toggleTheme = () => {
+        setIsDarkMode(prev => {
+            const nextMode = !prev;
+            const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+            if (nextMode === systemTheme) {
+                localStorage.removeItem('theme');
+            } else {
+                localStorage.setItem('theme', nextMode ? 'dark' : 'light');
+            }
+
+            return nextMode;
+        });
+    };
+
     const handleGoHome = () => {
         dispatch(clearSearch());
         setIsOpen(false);
     };
 
-    // Prevent scrolling when menu is open without causing layout shift
     useEffect(() => {
         if (isOpen) {
             const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
@@ -43,7 +96,6 @@ const Navbar = () => {
                     <span className="xs:hidden italic font-light ml-1">Arch.</span>
                 </Link>
 
-                {/* Desktop Navigation */}
                 <div className="hidden md:flex gap-4 md:gap-8 font-sans items-center">
                     <Link to="/" onClick={handleGoHome} className={`text-[10px] md:text-xs font-bold uppercase tracking-widest transition-colors relative after:content-[''] after:absolute after:-bottom-1 md:after:-bottom-2 after:left-0 after:h-[2px] after:bg-primary after:transition-all after:duration-300 ${location.pathname === '/' ? 'text-primary after:w-full' : 'text-neutral-dark hover:text-primary after:w-0 hover:after:w-full'}`}>HOME</Link>
                     <Link to="/categories" className={`text-[10px] md:text-xs font-bold uppercase tracking-widest transition-colors relative after:content-[''] after:absolute after:-bottom-1 md:after:-bottom-2 after:left-0 after:h-[2px] after:bg-primary after:transition-all after:duration-300 ${location.pathname.startsWith('/categories') ? 'text-primary after:w-full' : 'text-neutral-dark hover:text-primary after:w-0 hover:after:w-full'}`}>CATEGORIES</Link>
@@ -58,10 +110,39 @@ const Navbar = () => {
                             )}
                         </span>
                     </Link>
+                    <button
+                        onClick={toggleTheme}
+                        className="text-text-base hover:text-primary transition-colors focus:outline-none ml-2"
+                        aria-label="Toggle Theme"
+                    >
+                        {isDarkMode ? (
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                            </svg>
+                        ) : (
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                            </svg>
+                        )}
+                    </button>
                 </div>
 
-                {/* Mobile Icons & Hamburger */}
                 <div className="md:hidden flex items-center gap-1 relative z-50">
+                    <button
+                        onClick={toggleTheme}
+                        className="p-2 text-text-base focus:outline-none mr-1"
+                        aria-label="Toggle Theme"
+                    >
+                        {isDarkMode ? (
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                            </svg>
+                        ) : (
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                            </svg>
+                        )}
+                    </button>
                     <Link
                         to="/favorites"
                         onClick={() => setIsOpen(false)}
@@ -92,13 +173,11 @@ const Navbar = () => {
                 </div>
             </div>
 
-            {/* Mobile Nav Backdrop */}
             <div
                 className={`md:hidden fixed inset-0 z-[105] bg-black/40 backdrop-blur-sm transition-opacity duration-500 ${isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
                 onClick={() => setIsOpen(false)}
             />
 
-            {/* Mobile Navigation Panel */}
             <div className={`md:hidden fixed top-0 right-0 h-full w-1/2 z-[110] bg-bg-surface border-l border-text-base/10 shadow-2xl flex flex-col transition-transform duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
                 <div className="flex items-center justify-between px-4 py-4 border-b border-text-base/10">
                     <span className="text-xs font-bold uppercase tracking-widest text-neutral-dark">Menu</span>

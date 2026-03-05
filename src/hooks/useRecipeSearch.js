@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useSearchParams } from 'react-router-dom';
 import {
     searchRecipesByName,
     searchRecipesByIngredient,
@@ -17,10 +18,22 @@ import {
 
 const useRecipeSearch = () => {
     const dispatch = useDispatch();
+    const [searchParams, setSearchParams] = useSearchParams();
     const { searchType } = useSelector((state) => state.search);
+
+    const urlQuery = searchParams.get('q') || '';
+    const urlType = searchParams.get('type') || 'name';
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+
+    useEffect(() => {
+        if (urlQuery) {
+            dispatch(setSearchTerm(urlQuery));
+            dispatch(setSearchType(urlType));
+            triggerSearch(urlQuery, urlType);
+        }
+    }, [urlQuery, urlType, dispatch]);
 
     const loadInspiration = async () => {
         setLoading(true);
@@ -38,27 +51,30 @@ const useRecipeSearch = () => {
         }
     };
 
-    const handleSearch = async (term) => {
-        if (!term) return;
+    const triggerSearch = async (term, type) => {
         setLoading(true);
         setError(null);
         try {
             let results;
-            if (searchType === 'ingredient') {
-                // Ingredient search returns minimal data (no strCategory/strArea).
-                // Enrich each result with full details so filters can populate.
+            if (type === 'area') {
+                results = await searchRecipesByArea(term);
+                if (results.length === 0) setError(`No ${term} recipes found.`);
+            } else if (type === 'category') {
+                results = await searchRecipesByCategory(term);
+                if (results.length === 0) setError('No recipes found in this category.');
+            } else if (type === 'ingredient') {
                 const partialResults = await searchRecipesByIngredient(term);
                 const detailPromises = partialResults.map((r) =>
                     getRecipeDetailsById(r.idMeal).catch(() => r)
                 );
                 results = await Promise.all(detailPromises);
-                // Fall back to partial data if lookup returned null
                 results = results.map((full, i) => full || partialResults[i]);
+                if (results.length === 0) setError(`No recipes found matching "${term}".`);
             } else {
                 results = await searchRecipesByName(term);
+                if (results.length === 0) setError(`No recipes found matching "${term}".`);
             }
             dispatch(setSearchResults(results));
-            if (results.length === 0) setError(`No recipes found matching "${term}".`);
         } catch (err) {
             console.error(err);
             setError('Failed to fetch recipes.');
@@ -67,39 +83,26 @@ const useRecipeSearch = () => {
         }
     };
 
-    const handleAreaChange = async (area) => {
-        if (!area) return;
-        setLoading(true);
-        setError(null);
-        dispatch(setSearchTerm(area));
-        dispatch(setSearchType('name'));
-        try {
-            const results = await searchRecipesByArea(area);
-            dispatch(setSearchResults(results));
-            if (results.length === 0) setError(`No ${area} recipes found.`);
-        } catch (err) {
-            console.error(err);
-            setError('Failed to fetch cuisine results.');
-        } finally {
-            setLoading(false);
+    const handleSearch = (term) => {
+        if (!term) return;
+        setSearchParams({ q: term, type: searchType });
+    };
+
+    const handleTypeChange = (type) => {
+        dispatch(setSearchType(type));
+        if (urlQuery) {
+            setSearchParams({ q: urlQuery, type: type });
         }
     };
 
-    const handleCategoryClick = async (category) => {
-        setLoading(true);
-        setError(null);
-        dispatch(setSearchTerm(category));
-        dispatch(setSearchType('name'));
-        try {
-            const results = await searchRecipesByCategory(category);
-            dispatch(setSearchResults(results));
-            if (results.length === 0) setError('No recipes found in this category.');
-        } catch (err) {
-            console.error(err);
-            setError('Failed to fetch category recipes.');
-        } finally {
-            setLoading(false);
-        }
+    const handleAreaChange = (area) => {
+        if (!area) return;
+        setSearchParams({ q: area, type: 'area' });
+    };
+
+    const handleCategoryClick = (category) => {
+        if (!category) return;
+        setSearchParams({ q: category, type: 'category' });
     };
 
     return {
@@ -107,6 +110,7 @@ const useRecipeSearch = () => {
         error,
         loadInspiration,
         handleSearch,
+        handleTypeChange,
         handleAreaChange,
         handleCategoryClick
     };
