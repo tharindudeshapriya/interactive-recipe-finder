@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import toast from 'react-hot-toast';
 import { searchRecipesByCategory } from '../services/recipeApi';
 import { ITEMS_PER_PAGE } from '../constants';
 import RecipeCard from '../components/recipe/RecipeCard';
@@ -31,8 +32,10 @@ const CategoryDetails = () => {
                 setRecipes(results);
                 setCurrentPage(1);
             } catch (err) {
-                if (err.name === 'AbortError') return; // Navigated away — ignore
-                setError('Failed to fetch category recipes. Please try again later.');
+                if (err.name === 'AbortError') return;
+                const msg = err.name === 'NetworkError' ? err.message : 'Failed to fetch category recipes. Please try again.';
+                setError(msg);
+                toast.error(msg);
             } finally {
                 setLoadingRecipes(false);
             }
