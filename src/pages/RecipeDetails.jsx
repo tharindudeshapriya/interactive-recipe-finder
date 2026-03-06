@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import toast from 'react-hot-toast';
 import { toggleFavorite, selectIsFavorite } from '../store/favoritesSlice';
 import { getRecipeDetailsById } from '../services/recipeApi';
 import { getIngredients } from '../utils/recipeUtils';
@@ -46,10 +47,13 @@ const RecipeDetails = () => {
                     setRecipe(data);
                 } else {
                     setError('Recipe not found.');
+                    toast.error('Recipe not found.');
                 }
             } catch (err) {
-                if (err.name === 'AbortError') return; // Navigated away — ignore
-                setError('Failed to load recipe details.');
+                if (err.name === 'AbortError') return;
+                const msg = err.name === 'NetworkError' ? err.message : 'Failed to load recipe details. Please try again.';
+                setError(msg);
+                toast.error(msg);
             } finally {
                 setLoading(false);
             }

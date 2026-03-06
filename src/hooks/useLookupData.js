@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import toast from 'react-hot-toast';
 import { useDispatch, useSelector } from 'react-redux';
 import { listAllCategories, listAllAreas, listAllIngredients } from '../services/recipeApi';
 import { setAllCategories, setAllAreas, setAllIngredients, setLookupStatus } from '../store/searchSlice';
@@ -29,7 +30,9 @@ const useLookupData = () => {
                 dispatch(setLookupStatus('succeeded'));
             } catch (err) {
                 console.error('Failed to load lookup data', err);
+                const msg = err.name === 'NetworkError' ? err.message : 'Failed to initialize recipe database.';
                 dispatch(setLookupStatus('failed'));
+                toast.error(msg);
             }
         };
 

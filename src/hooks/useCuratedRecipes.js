@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import toast from 'react-hot-toast';
 import { getRandomRecipe } from '../services/recipeApi';
 
 const useCuratedRecipes = (allIngredients) => {
@@ -22,6 +23,7 @@ const useCuratedRecipes = (allIngredients) => {
             setRecipeOfTheDay(recipe);
         } catch (err) {
             console.error('Failed to fetch recipe of the day', err);
+            toast.error('Unable to refresh Recipe of the Day');
         }
     }, []);
 
@@ -47,8 +49,9 @@ const useCuratedRecipes = (allIngredients) => {
                     setRecipeOfTheDay(dailyRecipe);
                 }
             } catch (err) {
-                if (err.name !== 'AbortError') {
+                if (!cancelled && err.name !== 'AbortError') {
                     console.error('Failed to load curated content', err);
+                    toast.error('Some curated sections failed to load. Please try again later.');
                 }
             } finally {
                 if (!cancelled) setLoading(false);

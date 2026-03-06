@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import {
     searchRecipesByName,
     searchRecipesByIngredient,
@@ -77,7 +78,9 @@ const useRecipeSearch = () => {
             dispatch(setSearchResults(results));
         } catch (err) {
             console.error(err);
-            setError('Failed to fetch recipes.');
+            const msg = err.name === 'NetworkError' ? err.message : 'Failed to fetch recipes. Please try again.';
+            setError(msg);
+            toast.error(msg);
         } finally {
             setLoading(false);
         }
