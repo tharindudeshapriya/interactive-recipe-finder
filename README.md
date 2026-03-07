@@ -89,6 +89,10 @@ To keep the application clean and fast, I moved the complicated logic out of the
 - **The Challenge**: Passing data (like the user's "Favorite Recipes") from the top of the app all the way down through multiple layers of components gets very messy and hard to manage. This is called "Prop-Drilling".
 - **The Solution**: I used **Redux Toolkit** to create a single "Global Bulletin Board" for the app. Now, if a user clicks a "Heart" button on a recipe, it updates the bulletin board directly. Any other part of the app (like the Favorites counter at the top of the screen) can instantly see that update without needing a messy chain of data passing.
 
+#### 3. Scroll Restoration
+- **The Challenge**: When navigating from a long, scrolled-down search result list to a Recipe Detail page, the browser would preserve the scroll position, landing the user at the bottom of the new page.
+- **The Solution**: I implemented a "Scroll to Top" mechanism using a `useEffect` hook in the `RecipeDetails` component. This ensures that every time a user opens a new recipe, the view is automatically reset to the top of the page for a seamless experience.
+
 ---
 
 ## Application Gallery
@@ -112,9 +116,4 @@ To keep the application clean and fast, I moved the complicated logic out of the
 </p>
 
 ---
-
-#### 3. Scroll Restoration
-- **The Challenge**: When navigating from a long, scrolled-down search result list to a Recipe Detail page, the browser would preserve the scroll position, landing the user at the bottom of the new page.
-- **The Solution**: I implemented a "Scroll to Top" mechanism using a `useEffect` hook in the `RecipeDetails` component. This ensures that every time a user opens a new recipe, the view is automatically reset to the top of the page for a seamless experience.
-
 
