@@ -13,28 +13,6 @@ This project fulfills both the core requirements of a dynamic recipe search app 
 
 ---
 
-## Application Gallery
-
-*Click on any image below to view the full-length, high-resolution screenshot!*
-
-<p align="center">
-  <a href="./images/home_light.webp"><img src="./images/home_light.webp" alt="Home View Light" width="49%" style="border-radius: 8px;"></a>
-  <a href="./images/home_dark.webp"><img src="./images/home_dark.webp" alt="Home View Dark" width="49%" style="border-radius: 8px;"></a>
-</p>
-<p align="center">
-  <a href="./images/recipe%20details.webp"><img src="./images/recipe%20details.webp" alt="Recipe Details" width="49%" style="border-radius: 8px;"></a>
-  <a href="./images/search%20results.webp"><img src="./images/search%20results.webp" alt="Search Results" width="49%" style="border-radius: 8px;"></a>
-</p>
-<p align="center">
-  <a href="./images/favourite.webp"><img src="./images/favourite.webp" alt="User Favorites" width="80%" style="border-radius: 8px;"></a>
-</p>
-<p align="center">
-  <a href="./images/category.webp"><img src="./images/category.webp" alt="Categories" width="49%" style="border-radius: 8px;"></a>
-  <a href="./images/ingredients.webp"><img src="./images/ingredients.webp" alt="Ingredients" width="49%" style="border-radius: 8px;"></a>
-</p>
-
----
-
 ## Design & Visual Architecture
 
 The application was designed from the ground up to reflect a **"premium culinary"** editorial aesthetic, escaping the standard "dashboard" look of most technical projects.
@@ -110,6 +88,30 @@ To keep the application clean and fast, I moved the complicated logic out of the
 #### 2. Organizing the App's Memory (Redux)
 - **The Challenge**: Passing data (like the user's "Favorite Recipes") from the top of the app all the way down through multiple layers of components gets very messy and hard to manage. This is called "Prop-Drilling".
 - **The Solution**: I used **Redux Toolkit** to create a single "Global Bulletin Board" for the app. Now, if a user clicks a "Heart" button on a recipe, it updates the bulletin board directly. Any other part of the app (like the Favorites counter at the top of the screen) can instantly see that update without needing a messy chain of data passing.
+
+---
+
+## Application Gallery
+
+*Click on any image below to view the full-length, high-resolution screenshot!*
+
+<p align="center">
+  <a href="./images/home_light.webp"><img src="./images/home_light.webp" alt="Home View Light" width="49%" style="border-radius: 8px;"></a>
+  <a href="./images/home_dark.webp"><img src="./images/home_dark.webp" alt="Home View Dark" width="49%" style="border-radius: 8px;"></a>
+</p>
+<p align="center">
+  <a href="./images/recipe%20details.webp"><img src="./images/recipe%20details.webp" alt="Recipe Details" width="49%" style="border-radius: 8px;"></a>
+  <a href="./images/search%20results.webp"><img src="./images/search%20results.webp" alt="Search Results" width="49%" style="border-radius: 8px;"></a>
+</p>
+<p align="center">
+  <a href="./images/favourite.webp"><img src="./images/favourite.webp" alt="User Favorites" width="80%" style="border-radius: 8px;"></a>
+</p>
+<p align="center">
+  <a href="./images/category.webp"><img src="./images/category.webp" alt="Categories" width="49%" style="border-radius: 8px;"></a>
+  <a href="./images/ingredients.webp"><img src="./images/ingredients.webp" alt="Ingredients" width="49%" style="border-radius: 8px;"></a>
+</p>
+
+---
 
 #### 3. Scroll Restoration
 - **The Challenge**: When navigating from a long, scrolled-down search result list to a Recipe Detail page, the browser would preserve the scroll position, landing the user at the bottom of the new page.
