@@ -18,19 +18,19 @@ This project fulfills both the core requirements of a dynamic recipe search app 
 *Click on any image below to view the full-length, high-resolution screenshot!*
 
 <p align="center">
-  <a href="./images/home_light.png"><img src="./images/home_light.png" alt="Home View Light" width="49%" style="border-radius: 8px;"></a>
-  <a href="./images/home_dark.png"><img src="./images/home_dark.png" alt="Home View Dark" width="49%" style="border-radius: 8px;"></a>
+  <a href="./images/home_light.webp"><img src="./images/home_light.webp" alt="Home View Light" width="49%" style="border-radius: 8px;"></a>
+  <a href="./images/home_dark.webp"><img src="./images/home_dark.webp" alt="Home View Dark" width="49%" style="border-radius: 8px;"></a>
 </p>
 <p align="center">
-  <a href="./images/recipe%20details.png"><img src="./images/recipe%20details.png" alt="Recipe Details" width="49%" style="border-radius: 8px;"></a>
-  <a href="./images/search%20results.png"><img src="./images/search%20results.png" alt="Search Results" width="49%" style="border-radius: 8px;"></a>
+  <a href="./images/recipe%20details.webp"><img src="./images/recipe%20details.webp" alt="Recipe Details" width="49%" style="border-radius: 8px;"></a>
+  <a href="./images/search%20results.webp"><img src="./images/search%20results.webp" alt="Search Results" width="49%" style="border-radius: 8px;"></a>
 </p>
 <p align="center">
-  <a href="./images/favourite.png"><img src="./images/favourite.png" alt="User Favorites" width="80%" style="border-radius: 8px;"></a>
+  <a href="./images/favourite.webp"><img src="./images/favourite.webp" alt="User Favorites" width="80%" style="border-radius: 8px;"></a>
 </p>
 <p align="center">
-  <a href="./images/category.png"><img src="./images/category.png" alt="Categories" width="49%" style="border-radius: 8px;"></a>
-  <a href="./images/ingredients.png"><img src="./images/ingredients.png" alt="Ingredients" width="49%" style="border-radius: 8px;"></a>
+  <a href="./images/category.webp"><img src="./images/category.webp" alt="Categories" width="49%" style="border-radius: 8px;"></a>
+  <a href="./images/ingredients.webp"><img src="./images/ingredients.webp" alt="Ingredients" width="49%" style="border-radius: 8px;"></a>
 </p>
 
 ---
@@ -98,19 +98,21 @@ To explore this project natively on your local machine:
 
 ---
 
-## Engineering Challenges & Architectural Decisions
+## 🧠 Engineering Challenges & Solutions
 
-Rather than dumping all logic into React components, the architecture relies heavily on Custom Hooks to abstract heavy data transformations away from the declarative UI. Throughout development, several major challenges required custom engineering workarounds:
+To keep the application clean and fast, I moved the complicated logic out of the visual components and into "Custom Hooks". Here are some specific problems I had to solve:
 
-#### 1. Data Consistency (TheMealDB API Truncation Limitations)
-- **The Challenge**: When querying TheMealDB by Category (e.g., "Seafood") or Geographic Area (e.g., "Canadian"), the returned JSON objects are artificially truncated. They contain *only* an ID, Name, and Thumbnail, entirely omitting the vital `strCategory` and `strArea` tags.
-- **The Impact**: Because those tags are missing from the raw response, the client-side dropdown filters on the search page cannot accurately group or filter the results, theoretically breaking the Bonus "Filter by Cuisine" feature for those specific searches.
-- **The Solution**: For smaller "Ingredient" searches, I engineered a bypass by mapping over the truncated results and firing off individual `lookup.php` requests by ID, using `Promise.all` to dynamically "stitch" the full data objects together client-side. This guarantees perfect data. Conversely, for massive Category/Area searches, triggering 70+ sequential lookups would instantly freeze the user's browser thread. In those specific scenarios, the client-side filters are intentionally and safely disabled to prioritize application stability and performance over features.
 
-#### 2. Performance Optimization (API Over-Fetching & Spam)
-- **The Challenge**: Because the core search function updates dynamically based on the URL, a user typing "Beef" or rapidly navigating utilizing the browser's "Back" button could easily trigger dozens of identical API requests, drastically slowing down the app and risking IP rate-limiting from the free, public API.
-- **The Solution**: I engineered a custom `Map`-based caching layer directly inside the `recipeApi.js` service context. Before any `fetch` executes over the network, the service checks if the exact URL string exists in the local cache dictionary. If found, the request execution is intercepted and the data is served identically from RAM practically instantly, vastly improving the perceived speed of the app during rapid navigation.
+#### 1. Stopping API Spam (Caching)
+- **The Challenge**: Every time a user types a letter in the search box or clicks the "Back" button, it can trigger a new API request. Doing this too fast sends identical requests over and over, slowing everything down.
+- **The Solution**: I built a "cache" (a temporary memory bank). Before the app asks the internet for data, it checks the cache to see if we already searched for that exact thing recently. If we did, it loads the data instantly from local memory instead of waiting for the internet, making the app much faster.
 
-#### 3. State Architecture ("Prop-Drilling")
-- **The Challenge**: Under standard React Context patterns, passing the "Favorites" array or the massive global "Categories" lookup lists down through multiple layers of the application tree (from the top-level Router down to individual recipe cards) became incredibly messy, brittle, and difficult to maintain. 
-- **The Solution**: I deployed **Redux Toolkit** to act as a singular "global bulletin board" for the application. Components that need to write to the favorites list (like a heart icon on a Recipe Card) isolate their logic by simply `dispatching` an action to the central slice. Meanwhile, completely disconnected components (like the Navbar's favorite counter badge) instantly synchronize with the new state using `useSelector`, entirely eliminating prop-drilling and coupling.
+#### 2. Organizing the App's Memory (Redux)
+- **The Challenge**: Passing data (like the user's "Favorite Recipes") from the top of the app all the way down through multiple layers of components gets very messy and hard to manage. This is called "Prop-Drilling".
+- **The Solution**: I used **Redux Toolkit** to create a single "Global Bulletin Board" for the app. Now, if a user clicks a "Heart" button on a recipe, it updates the bulletin board directly. Any other part of the app (like the Favorites counter at the top of the screen) can instantly see that update without needing a messy chain of data passing.
+
+#### 3. Scroll Restoration
+- **The Challenge**: When navigating from a long, scrolled-down search result list to a Recipe Detail page, the browser would preserve the scroll position, landing the user at the bottom of the new page.
+- **The Solution**: I implemented a "Scroll to Top" mechanism using a `useEffect` hook in the `RecipeDetails` component. This ensures that every time a user opens a new recipe, the view is automatically reset to the top of the page for a seamless experience.
+
+
